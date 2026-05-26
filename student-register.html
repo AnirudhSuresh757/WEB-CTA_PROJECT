@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>STUDENT // REGISTER</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+  <!-- Animated Background -->
+  <div class="bg-canvas" aria-hidden="true">
+    <div class="bg-grid"></div>
+    <div class="bg-pulse bg-pulse--lime"></div>
+    <div class="bg-pulse bg-pulse--orange"></div>
+    <div class="bg-pulse bg-pulse--cyan"></div>
+    <div class="bg-data-stream"></div>
+    <div class="bg-data-stream"></div>
+    <div class="bg-data-stream"></div>
+    <div class="bg-data-stream"></div>
+    <div class="bg-data-stream"></div>
+    <div class="bg-particles">
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+    </div>
+    <div class="bg-scanline"></div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- App -->
+  <main class="app">
+    <div class="login">
+      <div class="login__frame">
+
+        <!-- Corner Accents -->
+        <div class="corner-accent corner-accent--tl"></div>
+        <div class="corner-accent corner-accent--tr"></div>
+        <div class="corner-accent corner-accent--bl"></div>
+        <div class="corner-accent corner-accent--br"></div>
+
+        <!-- Header -->
+        <header class="login__header">
+          <div class="login__logo">
+            <div class="login__logo-icon">📝</div>
+            <span class="login__logo-text">STUDENT_REG v3.2</span>
+          </div>
+          <h1 class="login__title">Student Registration</h1>
+          <p class="login__subtitle">Create your student account</p>
+        </header>
+
+        <!-- Registration Form -->
+        <form class="form" id="registerForm" novalidate>
+
+          <!-- Error Message -->
+          <div class="error-msg" id="errorMsg" role="alert">
+            <span class="error-msg__icon">!</span>
+            <span id="errorText">Registration failed.</span>
+          </div>
+
+          <!-- Success Message -->
+          <div class="success-msg" id="successMsg" role="status" style="display: none; align-items: center; gap: 8px; padding: 12px 16px; background: rgba(0, 255, 136, 0.1); border: 1px solid rgba(0, 255, 136, 0.2); border-radius: var(--radius); font-family: var(--font-mono); font-size: var(--font-size-sm); color: #00ff88;">
+            <span class="success-msg__icon">✓</span>
+            <span id="successText">Registration successful!</span>
+          </div>
+
+          <!-- USN Field -->
+          <div class="field">
+            <label class="field__label" for="usn">University Seat Number</label>
+            <div class="field__input-wrap">
+              <input
+                class="field__input"
+                type="text"
+                id="usn"
+                name="usn"
+                placeholder="Enter your USN"
+                autocomplete="username"
+                spellcheck="false"
+                required
+              >
+              <span class="field__icon">#</span>
+              <div class="field__bar"></div>
+            </div>
+          </div>
+
+          <!-- Name Field -->
+          <div class="field">
+            <label class="field__label" for="name">Full Name</label>
+            <div class="field__input-wrap">
+              <input
+                class="field__input"
+                type="text"
+                id="name"
+                name="name"
+                placeholder="Enter your full name"
+                autocomplete="name"
+                required
+              >
+              <span class="field__icon">👤</span>
+              <div class="field__bar"></div>
+            </div>
+          </div>
+
+          <!-- Department Field -->
+          <div class="field">
+            <label class="field__label" for="dept">Department</label>
+            <div class="field__input-wrap">
+              <select
+                class="field__input"
+                id="dept"
+                name="dept"
+                required
+                style="appearance: none; cursor: pointer;"
+              >
+                <option value="">Select Department</option>
+                <option value="CSE">Computer Science (CSE)</option>
+                <option value="ISE">Information Science (ISE)</option>
+                <option value="ECE">Electronics (ECE)</option>
+                <option value="EEE">Electrical (EEE)</option>
+                <option value="ME">Mechanical (ME)</option>
+                <option value="CV">Civil (CV)</option>
+              </select>
+              <span class="field__icon" style="pointer-events: none;">▼</span>
+              <div class="field__bar"></div>
+            </div>
+          </div>
+
+          <!-- Gmail Field -->
+          <div class="field">
+            <label class="field__label" for="email">Gmail Address</label>
+            <div class="field__input-wrap">
+              <input
+                class="field__input"
+                type="email"
+                id="email"
+                name="email"
+                placeholder="yourname@gmail.com"
+                autocomplete="email"
+                required
+              >
+              <span class="field__icon">@</span>
+              <div class="field__bar"></div>
+            </div>
+          </div>
+
+          <!-- Mobile Number Field -->
+          <div class="field">
+            <label class="field__label" for="mobile">Mobile Number</label>
+            <div class="field__input-wrap">
+              <input
+                class="field__input"
+                type="tel"
+                id="mobile"
+                name="mobile"
+                placeholder="10-digit mobile number"
+                autocomplete="tel"
+                maxlength="10"
+                pattern="[6-9][0-9]{9}"
+                required
+              >
+              <span class="field__icon">📱</span>
+              <div class="field__bar"></div>
+            </div>
+          </div>
+
+          <!-- Password Field -->
+          <div class="field">
+            <label class="field__label" for="password">Password</label>
+            <div class="field__input-wrap">
+              <input
+                class="field__input"
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Create a password (min 6 chars)"
+                autocomplete="new-password"
+                required
+              >
+              <span class="field__icon">*</span>
+              <div class="field__bar"></div>
+            </div>
+          </div>
+
+          <!-- Confirm Password Field -->
+          <div class="field">
+            <label class="field__label" for="confirmPassword">Confirm Password</label>
+            <div class="field__input-wrap">
+              <input
+                class="field__input"
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                placeholder="Confirm your password"
+                autocomplete="new-password"
+                required
+              >
+              <span class="field__icon">*</span>
+              <div class="field__bar"></div>
+            </div>
+          </div>
+
+          <!-- Submit -->
+          <button class="btn-login" type="submit" id="btnRegister">
+            Register
+          </button>
+        </form>
+
+        <!-- Login Link -->
+        <div style="text-align: center; margin-top: 16px;">
+          <a href="student-login.html" style="font-family: var(--font-mono); font-size: 11px; color: var(--glow-lime); text-decoration: none; letter-spacing: 1px; opacity: 0.8; transition: opacity 0.2s;">
+            Already registered? Login here →
+          </a>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+          <span><span class="status-bar__dot"></span>SYSTEM ONLINE</span>
+          <span id="clockDisplay">--:--:--</span>
+        </div>
+
+        <!-- Footer -->
+        <footer class="login__footer">
+          <a href="index.html" style="color: var(--text-muted); text-decoration: none;">← Back to Portal Selection</a>
+        </footer>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/auth.js"></script>
+  <script src="js/validator.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      // Auto-redirect if already logged in as student
+      if (Auth.isStudentLoggedIn()) {
+        window.location.href = 'dashboard.html';
+        return;
+      }
+
+      var form = document.getElementById('registerForm');
+      var usnInput = document.getElementById('usn');
+      var nameInput = document.getElementById('name');
+      var deptInput = document.getElementById('dept');
+      var emailInput = document.getElementById('email');
+      var mobileInput = document.getElementById('mobile');
+      var passwordInput = document.getElementById('password');
+      var confirmInput = document.getElementById('confirmPassword');
+      var btnRegister = document.getElementById('btnRegister');
+      var errorMsg = document.getElementById('errorMsg');
+      var errorText = document.getElementById('errorText');
+      var successMsg = document.getElementById('successMsg');
+      var successText = document.getElementById('successText');
+      var clockDisplay = document.getElementById('clockDisplay');
+
+      // Field container elements for validation
+      var usnField = usnInput.closest('.field');
+      var nameField = nameInput.closest('.field');
+      var deptField = deptInput.closest('.field');
+      var emailField = emailInput.closest('.field');
+      var mobileField = mobileInput.closest('.field');
+      var passwordField = passwordInput.closest('.field');
+      var confirmField = confirmInput.closest('.field');
+
+      // ── Attach Real-Time Validation ──
+      Validator.attachField(usnField, usnInput, Validator.validateUSN);
+      Validator.attachField(nameField, nameInput, Validator.validateName);
+      Validator.attachField(deptField, deptInput, Validator.validateDept);
+      Validator.attachField(emailField, emailInput, Validator.validateEmail);
+      Validator.attachField(mobileField, mobileInput, Validator.validateMobile);
+      Validator.attachField(passwordField, passwordInput, Validator.validatePassword);
+      Validator.attachField(confirmField, confirmInput, function (val) {
+        return Validator.validateConfirmPassword(passwordInput.value, val);
+      });
+
+      // Fields array for bulk validation
+      var formFields = [
+        { fieldEl: usnField, inputEl: usnInput, validateFn: Validator.validateUSN },
+        { fieldEl: nameField, inputEl: nameInput, validateFn: Validator.validateName },
+        { fieldEl: deptField, inputEl: deptInput, validateFn: Validator.validateDept },
+        { fieldEl: emailField, inputEl: emailInput, validateFn: Validator.validateEmail },
+        { fieldEl: mobileField, inputEl: mobileInput, validateFn: Validator.validateMobile },
+        { fieldEl: passwordField, inputEl: passwordInput, validateFn: Validator.validatePassword },
+        { fieldEl: confirmField, inputEl: confirmInput, validateFn: function (val) {
+          return Validator.validateConfirmPassword(passwordInput.value, val);
+        }}
+      ];
+
+      // Error handling
+      function showError(message) {
+        successMsg.style.display = 'none';
+        errorText.textContent = message;
+        errorMsg.classList.add('visible');
+        errorMsg.style.animation = 'none';
+        errorMsg.offsetHeight;
+        errorMsg.style.animation = '';
+      }
+
+      function hideError() {
+        errorMsg.classList.remove('visible');
+      }
+
+      function showSuccess(message) {
+        hideError();
+        successText.textContent = message;
+        successMsg.style.display = 'flex';
+      }
+
+      // Loading state
+      function setLoading(on) {
+        btnRegister.classList.toggle('loading', on);
+        btnRegister.disabled = on;
+        usnInput.disabled = on;
+        nameInput.disabled = on;
+        deptInput.disabled = on;
+        emailInput.disabled = on;
+        mobileInput.disabled = on;
+        passwordInput.disabled = on;
+        confirmInput.disabled = on;
+      }
+
+      // Mobile: only allow digits
+      mobileInput.addEventListener('input', function () {
+        this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
+      });
+
+      // Form submission
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        hideError();
+        successMsg.style.display = 'none';
+
+        // Validate all fields with inline errors
+        var allValid = Validator.validateAll(formFields);
+        if (!allValid) return;
+
+        var usn = usnInput.value.trim();
+        var name = nameInput.value.trim();
+        var dept = deptInput.value;
+        var email = emailInput.value.trim();
+        var mobile = mobileInput.value.trim();
+        var password = passwordInput.value;
+
+        setLoading(true);
+
+        // Simulate network latency
+        setTimeout(function () {
+          var result = Auth.registerStudent(usn, name, dept, email, mobile, password);
+
+          if (!result.success) {
+            setLoading(false);
+            showError(result.message);
+            return;
+          }
+
+          // Success
+          showSuccess('Registration successful! Redirecting to login...');
+
+          btnRegister.textContent = 'REGISTERED';
+          btnRegister.classList.remove('loading');
+          btnRegister.style.background = '#00ff88';
+          btnRegister.style.boxShadow = '0 0 40px rgba(0, 255, 136, 0.5)';
+
+          setTimeout(function () {
+            window.location.href = 'student-login.html';
+          }, 1500);
+
+        }, 1400);
+      });
+
+      // Clock
+      function tick() {
+        var now = new Date();
+        var h = String(now.getHours()).padStart(2, '0');
+        var m = String(now.getMinutes()).padStart(2, '0');
+        var s = String(now.getSeconds()).padStart(2, '0');
+        clockDisplay.textContent = h + ':' + m + ':' + s;
+      }
+      tick();
+      setInterval(tick, 1000);
+
+      // Password visibility toggle
+      var passIcons = document.querySelectorAll('.field__icon');
+      passIcons.forEach(function (icon) {
+        var input = icon.previousElementSibling;
+        if (input && (input.id === 'password' || input.id === 'confirmPassword')) {
+          icon.style.cursor = 'pointer';
+          icon.style.pointerEvents = 'auto';
+          icon.style.userSelect = 'none';
+
+          var visible = false;
+          icon.addEventListener('click', function () {
+            visible = !visible;
+            input.type = visible ? 'text' : 'password';
+            icon.textContent = visible ? 'X' : '*';
+            icon.style.color = visible ? 'var(--glow-lime)' : '';
+          });
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -E \"\\\\.html$\")",
+      "Bash(grep -rn \"Auth\\\\.createSession\\\\|Auth\\\\.getSession\\\\|Auth\\\\.destroySession\\\\|Auth\\\\.isLoggedIn\\\\|Auth\\\\.guardPage\" '/home/anirudh_suresh/Desktop/BTECH_Coding/WEB TECH/CTA_PROJECTS/WEB-CTA-RESTART-FINAL/' --include=*.html --include=*.js)",
+      "Bash(grep -rn \"Auth\\\\.createSession\\\\|Auth\\\\.getSession\\\\|Auth\\\\.destroySession\\\\|Auth\\\\.isLoggedIn\\\\|Auth\\\\.guardPage\\\\|Auth\\\\.authenticate\\\\|Auth\\\\.redirectAfterLogin\\\\|Auth\\\\.getLoginPage\\\\|Auth\\\\.getRedirectPath\" '/home/anirudh_suresh/Desktop/BTECH_Coding/WEB TECH/CTA_PROJECTS/WEB-CTA-RESTART-FINAL/' --include=*.html --include=*.js)",
+      "Bash(grep -rn \"markAttendance\\\\|canMarkAttendance\" '/home/anirudh_suresh/Desktop/BTECH_Coding/WEB TECH/CTA_PROJECTS/WEB-CTA-RESTART-FINAL/' --include=*.html --include=*.js)",
+      "Bash(curl -sL -o tiny_face_detector_model-weights_manifest.json \"https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights/tiny_face_detector_model-weights_manifest.json\")",
+      "Bash(curl -sL -o tiny_face_detector_model-shard1 \"https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights/tiny_face_detector_model-shard1\")",
+      "Bash(curl -sI \"https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/model/tiny_face_detector_model-weights_manifest.json\")",
+      "Bash(curl -sI \"https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js\")",
+      "Bash(sed -n '767,785p' css/dashboard.css)",
+      "Bash(sed -n '215,252p' js/labSessions.js)"
+    ]
+  }
+}

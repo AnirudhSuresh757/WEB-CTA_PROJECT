@@ -1,0 +1,1729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>STUDENT // DASHBOARD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+  <!-- Animated Background -->
+  <div class="bg-canvas" aria-hidden="true">
+    <div class="bg-grid"></div>
+    <div class="bg-pulse bg-pulse--lime"></div>
+    <div class="bg-pulse bg-pulse--orange"></div>
+    <div class="bg-pulse bg-pulse--cyan"></div>
+    <div class="bg-data-stream"></div>
+    <div class="bg-data-stream"></div>
+    <div class="bg-data-stream"></div>
+    <div class="bg-data-stream"></div>
+    <div class="bg-data-stream"></div>
+    <div class="bg-particles">
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+    </div>
+    <div class="bg-scanline"></div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Sidebar Overlay (mobile) -->
+  <div class="overlay" id="sidebarOverlay"></div>
+
+  <!-- Security Toast Notifications -->
+  <div class="security-toasts" id="securityToasts"></div>
+
+  <!-- Dashboard Layout -->
+  <div class="dash">
+
+    <!-- ═══ Sidebar ═══ -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__brand">
+        <div class="sidebar__brand-icon">&gt;_</div>
+        <span class="sidebar__brand-text">Student<br>Terminal</span>
+      </div>
+
+      <div class="sidebar__user">
+        <div class="sidebar__user-name" data-user-name>Loading...</div>
+        <div class="sidebar__user-id" data-user-id>------</div>
+        <div class="sidebar__user-dept" data-user-dept>--</div>
+      </div>
+
+      <nav class="sidebar__nav" id="sidebarNav">
+        <a href="#dashboard" class="sidebar__link active" data-nav="dashboard">
+          <span class="sidebar__link-icon">◆</span>
+          Dashboard
+        </a>
+        <a href="#lab-sessions" class="sidebar__link" data-nav="lab-sessions">
+          <span class="sidebar__link-icon">▣</span>
+          Lab Sessions
+        </a>
+        <a href="#attendance" class="sidebar__link" data-nav="attendance">
+          <span class="sidebar__link-icon">◎</span>
+          Attendance
+        </a>
+        <a href="#assignments" class="sidebar__link" data-nav="assignments">
+          <span class="sidebar__link-icon">▤</span>
+          Assignments
+        </a>
+        <a href="#resources" class="sidebar__link" data-nav="resources">
+          <span class="sidebar__link-icon">◈</span>
+          Resources
+        </a>
+        <a href="#settings" class="sidebar__link" data-nav="settings">
+          <span class="sidebar__link-icon">⚙</span>
+          Settings
+        </a>
+      </nav>
+
+      <div class="sidebar__footer">
+        <button class="sidebar__logout" id="btnLogout">
+          <span>⏻</span>
+          Disconnect
+        </button>
+      </div>
+    </aside>
+
+    <!-- ═══ Navbar ═══ -->
+    <header class="navbar">
+      <div class="navbar__left">
+        <button class="navbar__toggle" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+        <h1 class="navbar__title">Student Dashboard</h1>
+      </div>
+      <div class="navbar__right">
+        <div class="navbar__datetime">
+          <div id="navDate">---</div>
+          <div id="navClock">--:--:--</div>
+        </div>
+        <button class="navbar__notif-btn" id="notifToggle" aria-label="Notifications">
+          🔔
+          <span class="navbar__badge" id="notifBadge">0</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ═══ Notification Panel ═══ -->
+    <div class="notif" id="notifPanel">
+      <div class="notif__header">
+        <span class="notif__title">Notifications</span>
+        <button class="notif__mark-all" id="notifMarkAll">Mark all read</button>
+      </div>
+      <div class="notif__list">
+        <div class="notif__item unread">
+          <div class="notif__item-title">Lab Session Starting</div>
+          <div class="notif__item-text">Web Technologies lab begins in 15 minutes. Room 302.</div>
+          <div class="notif__item-time">2 min ago</div>
+        </div>
+        <div class="notif__item unread">
+          <div class="notif__item-title">Assignment Due</div>
+          <div class="notif__item-text">CSS Grid Layout assignment due tomorrow at 11:59 PM.</div>
+          <div class="notif__item-time">1 hour ago</div>
+        </div>
+        <div class="notif__item unread">
+          <div class="notif__item-title">Attendance Alert</div>
+          <div class="notif__item-text">Your attendance in Data Structures has dropped below 75%.</div>
+          <div class="notif__item-time">3 hours ago</div>
+        </div>
+        <div class="notif__item">
+          <div class="notif__item-title">System Update</div>
+          <div class="notif__item-text">Scheduled maintenance on Saturday 2:00 AM - 4:00 AM.</div>
+          <div class="notif__item-time">Yesterday</div>
+        </div>
+        <div class="notif__item">
+          <div class="notif__item-title">Grade Posted</div>
+          <div class="notif__item-text">Mid-term marks for Operating Systems have been published.</div>
+          <div class="notif__item-time">2 days ago</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ Main Content ═══ -->
+    <main class="main" id="mainContent">
+
+      <!-- ═══ Section: Dashboard ═══ -->
+      <div data-section="dashboard" class="section--active">
+
+      <!-- Greeting -->
+      <div class="main__header animate-in">
+        <h2 class="main__greeting">Welcome back, <span data-user-name>Student</span></h2>
+        <p class="main__sub">// <span id="labNameDisplay">AUTHENTICATED SESSION ACTIVE</span></p>
+      </div>
+
+      <!-- Row 1: Timers -->
+      <div class="grid grid--2 section">
+        <!-- Session Timer -->
+        <div class="card animate-in">
+          <div class="corner-accent corner-accent--tl"></div>
+          <div class="corner-accent corner-accent--br"></div>
+          <div class="card__header">
+            <span class="card__title">Session Timer</span>
+            <span class="card__icon">⏱</span>
+          </div>
+          <div class="timer">
+            <div class="timer__display" id="sessionTimer">--:--:--</div>
+            <div class="timer__label" id="sessionLabel">Remaining Time</div>
+          </div>
+          <div class="progress">
+            <div class="progress__bar" id="sessionProgress" style="width: 100%"></div>
+          </div>
+        </div>
+
+        <!-- Lab Duration -->
+        <div class="card card--orange animate-in">
+          <div class="corner-accent corner-accent--tl"></div>
+          <div class="corner-accent corner-accent--br"></div>
+          <div class="card__header">
+            <span class="card__title">Lab Duration</span>
+            <span class="card__icon" style="color: var(--accent-orange);">⏱</span>
+          </div>
+          <div class="timer">
+            <div class="timer__display timer__display--orange" id="labTimer">--:--:--</div>
+            <div class="timer__label">Lab Time Remaining</div>
+          </div>
+          <div class="progress">
+            <div class="progress__bar progress__bar--orange" id="labProgress" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2: Stats -->
+      <div class="grid grid--4 section">
+        <div class="card stat animate-in">
+          <div class="stat__value" id="dashStatAttendance">0%</div>
+          <div class="stat__label">Attendance</div>
+        </div>
+        <div class="card stat animate-in">
+          <div class="stat__value stat__value--orange" id="dashStatTasksDone">0</div>
+          <div class="stat__label">Tasks Done</div>
+        </div>
+        <div class="card stat animate-in">
+          <div class="stat__value" id="dashStatPending">0</div>
+          <div class="stat__label">Pending</div>
+        </div>
+        <div class="card stat animate-in">
+          <div class="stat__value stat__value--orange" id="dashStatSessions">0</div>
+          <div class="stat__label">Sessions</div>
+        </div>
+      </div>
+
+      <!-- Row 2.5: Time Tracker -->
+      <div class="grid grid--2 section">
+        <div class="card animate-in">
+          <div class="corner-accent corner-accent--tl"></div>
+          <div class="corner-accent corner-accent--br"></div>
+          <div class="card__header">
+            <span class="card__title">Active Uptime</span>
+            <span class="card__icon">⏱</span>
+          </div>
+          <div class="tracker">
+            <div class="tracker-status" id="trackerStatus">TRACKER IDLE</div>
+            <div class="tracker__row">
+              <span class="tracker__row-label">Active Time</span>
+              <span class="tracker__row-value tracker__row-value--active" id="trackerActive">00:00:00</span>
+            </div>
+            <div class="tracker__row">
+              <span class="tracker__row-label">Total Elapsed</span>
+              <span class="tracker__row-value tracker__row-value--total" id="trackerTotal">00:00:00</span>
+            </div>
+            <div class="tracker__row">
+              <span class="tracker__row-label">Session Remaining</span>
+              <span class="tracker__row-value tracker__row-value--remaining" id="trackerRemaining">00:00:00</span>
+            </div>
+            <div class="tracker__bar-wrap">
+              <div class="tracker__bar tracker__bar--total" id="trackerTotalBar"></div>
+              <div class="tracker__bar tracker__bar--active" id="trackerActiveBar" style="width: 0%"></div>
+            </div>
+            <div class="tracker__legend">
+              <div class="tracker__legend-item">
+                <span class="tracker__legend-dot" style="background: var(--glow-lime)"></span>
+                Active
+              </div>
+              <div class="tracker__legend-item">
+                <span class="tracker__legend-dot" style="background: var(--accent-orange)"></span>
+                Total Elapsed
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card animate-in">
+          <div class="corner-accent corner-accent--tl"></div>
+          <div class="corner-accent corner-accent--br"></div>
+          <div class="card__header">
+            <span class="card__title">Tracking Breakdown</span>
+            <span class="card__icon">▤</span>
+          </div>
+          <div class="tracker">
+            <div class="tracker__row">
+              <span class="tracker__row-label">Active Percentage</span>
+              <span class="tracker__row-value" id="trackerActivePct">0%</span>
+            </div>
+            <div class="tracker__row">
+              <span class="tracker__row-label">Pause Count</span>
+              <span class="tracker__row-value" id="trackerPauseCount">0</span>
+            </div>
+            <div class="tracker__row">
+              <span class="tracker__row-label">Last Pause Reason</span>
+              <span class="tracker__row-value" id="trackerPauseReason" style="font-size: 12px;">—</span>
+            </div>
+            <div class="tracker__row">
+              <span class="tracker__row-label">Status</span>
+              <span class="tracker__row-value" id="trackerState" style="font-size: 12px;">IDLE</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 3: Attendance + Webcam -->
+      <div class="grid grid--2-1 section">
+        <!-- Attendance Stats -->
+        <div class="card animate-in">
+          <div class="corner-accent corner-accent--tl"></div>
+          <div class="corner-accent corner-accent--br"></div>
+          <div class="card__header">
+            <span class="card__title">Attendance Overview</span>
+            <span class="card__icon">◎</span>
+          </div>
+          <div class="donut-wrap">
+            <div class="donut">
+              <svg class="donut__svg" viewBox="0 0 36 36">
+                <circle class="donut__track" cx="18" cy="18" r="15.915"></circle>
+                <circle class="donut__fill" cx="18" cy="18" r="15.915"
+                  stroke-dasharray="100"
+                  stroke-dashoffset="100"
+                  id="attendanceDonut"></circle>
+              </svg>
+              <div class="donut__center">
+                <span class="donut__pct" id="dashAttPct">0%</span>
+                <span class="donut__pct-label">Overall</span>
+              </div>
+            </div>
+            <div class="donut__legend">
+              <div class="donut__legend-item">
+                <span class="donut__legend-dot" style="background: var(--glow-lime)"></span>
+                <span id="dashAttPresent">Present: 0 days</span>
+              </div>
+              <div class="donut__legend-item">
+                <span class="donut__legend-dot" style="background: var(--accent-orange)"></span>
+                <span id="dashAttLate">Late: 0 days</span>
+              </div>
+              <div class="donut__legend-item">
+                <span class="donut__legend-dot" style="background: var(--error-red)"></span>
+                <span id="dashAttAbsent">Absent: 0 days</span>
+              </div>
+              <div class="donut__legend-item">
+                <span class="donut__legend-dot" style="background: var(--text-muted)"></span>
+                Minimum Required: 75%
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:12px; padding-top:8px; border-top:1px solid var(--border-dim);">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--text-muted); letter-spacing:1px;">LAB SESSION</span>
+              <span style="font-family:var(--font-mono); font-size:11px; color:var(--glow-lime);" id="dashLabName">—</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--text-muted); letter-spacing:1px;">TODAY'S STATUS</span>
+              <span style="font-family:var(--font-mono); font-size:11px;" id="dashAttTodayStatus">NOT MARKED</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Webcam Attendance -->
+        <div class="card animate-in">
+          <div class="corner-accent corner-accent--tl"></div>
+          <div class="corner-accent corner-accent--br"></div>
+          <div class="card__header">
+            <span class="card__title">Webcam Attendance</span>
+            <span class="card__icon">📷</span>
+          </div>
+          <div class="webcam">
+            <div class="webcam__viewport">
+              <video class="webcam__video" id="webcamVideo" autoplay muted playsinline></video>
+              <canvas class="webcam__canvas" id="webcamCanvas"></canvas>
+              <canvas class="face-overlay" id="faceOverlay"></canvas>
+              <div class="webcam__overlay" id="webcamOverlay">
+                <span class="webcam__overlay-icon">📷</span>
+                <span>Click to enable camera</span>
+              </div>
+            </div>
+            <div class="webcam__status" id="webcamStatus">CAMERA INACTIVE</div>
+            <div class="face-status" id="faceStatus">DETECTION IDLE</div>
+            <div class="face-conf">
+              <span class="face-conf__label">Confidence</span>
+              <div class="face-conf__track">
+                <div class="face-conf__bar" id="faceConfBar"></div>
+              </div>
+              <span class="face-conf__pct" id="faceConfText">0%</span>
+            </div>
+            <div class="face-info">
+              <div class="face-info__left">
+                <span class="face-info__label">Faces:</span>
+                <span class="face-count" id="faceCount">0</span>
+              </div>
+            </div>
+            <div class="webcam__actions">
+              <button class="webcam__btn webcam__btn--primary" id="webcamCapture">Capture</button>
+              <button class="webcam__btn webcam__btn--secondary" id="webcamToggle">Enable</button>
+              <button class="webcam__btn webcam__btn--face" id="faceDetectToggle" disabled>Detect</button>
+            </div>
+            <div class="webcam__preview" id="webcamPreview" style="display:none;">
+              <div class="webcam__preview-header">
+                <span class="webcam__preview-title">Captured Frame</span>
+                <span class="webcam__preview-time" id="webcamPreviewTime"></span>
+              </div>
+              <img class="webcam__preview-img" id="webcamPreviewImg" alt="Captured frame">
+              <div class="webcam__preview-actions">
+                <button class="webcam__btn webcam__btn--primary" id="webcamPreviewSave">Save</button>
+                <button class="webcam__btn webcam__btn--secondary" id="webcamPreviewClose">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 4: Tasks -->
+      <div class="grid grid--1-2 section">
+        <!-- Task Progress Summary -->
+        <div class="card animate-in">
+          <div class="corner-accent corner-accent--tl"></div>
+          <div class="corner-accent corner-accent--br"></div>
+          <div class="card__header">
+            <span class="card__title">Experiment Progress</span>
+            <span class="card__icon">▤</span>
+          </div>
+          <div class="stat" style="padding: 16px 0;">
+            <div class="stat__value" id="taskCount">0<span style="font-size: 20px; color: var(--text-muted);">/10</span></div>
+            <div class="stat__label">Experiments Completed</div>
+          </div>
+          <div class="progress" style="height: 8px;">
+            <div class="progress__bar" id="taskProgressBar" style="width: 0%"></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-top: 8px;">
+            <span style="font-family: var(--font-mono); font-size: 10px; color: var(--text-muted);">PROGRESS</span>
+            <span style="font-family: var(--font-mono); font-size: 10px; color: var(--glow-lime);" id="taskProgressPct">0%</span>
+          </div>
+          <div style="margin-top: 16px;">
+            <button class="task-reset-btn" id="taskResetBtn">⟳ Reset All</button>
+          </div>
+        </div>
+
+        <!-- Experiment List -->
+        <div class="card animate-in">
+          <div class="corner-accent corner-accent--tl"></div>
+          <div class="corner-accent corner-accent--br"></div>
+          <div class="card__header">
+            <span class="card__title">Lab Experiments</span>
+            <span class="card__icon">▣</span>
+          </div>
+          <ul class="task-list" id="taskList">
+            <!-- Dynamically rendered by Tasks module -->
+          </ul>
+        </div>
+      </div>
+
+      <!-- Row 5: Security Monitor -->
+      <div class="section">
+        <div class="card animate-in">
+          <div class="corner-accent corner-accent--tl"></div>
+          <div class="corner-accent corner-accent--br"></div>
+          <div class="card__header">
+            <span class="card__title">Security Monitor</span>
+            <span class="card__icon">⊘</span>
+            <span class="security-badge" id="securityBadge">0</span>
+          </div>
+          <div class="security-panel">
+            <div class="security-stats">
+              <div class="security-stat">
+                <div class="security-stat__value" id="secTotal">0</div>
+                <div class="security-stat__label">Total</div>
+              </div>
+              <div class="security-stat">
+                <div class="security-stat__value security-stat__value--warn" id="secMedium">0</div>
+                <div class="security-stat__label">Medium</div>
+              </div>
+              <div class="security-stat">
+                <div class="security-stat__value security-stat__value--danger" id="secHigh">0</div>
+                <div class="security-stat__label">High</div>
+              </div>
+              <div class="security-stat">
+                <div class="security-stat__value" id="secFlagged">—</div>
+                <div class="security-stat__label">Flagged</div>
+              </div>
+            </div>
+            <div class="security-panel__header">
+              <span class="security-panel__title">Violation Log</span>
+              <button class="security-panel__clear" id="secClearLog">Clear</button>
+            </div>
+            <div class="security-log" id="securityLog">
+              <div class="security-log__empty">No violations recorded</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      </div><!-- end data-section="dashboard" -->
+
+      <!-- ═══ Section: Lab Sessions ═══ -->
+      <div data-section="lab-sessions" style="display:none;">
+
+        <div class="main__header animate-in">
+          <h2 class="main__greeting">Lab Sessions</h2>
+          <p class="main__sub">// ACTIVE LAB ENVIRONMENT</p>
+        </div>
+
+        <!-- Row 1: Current Session + Stats -->
+        <div class="grid grid--2 section">
+          <div class="card animate-in" id="labCurrentCard">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Current Session</span>
+              <span class="card__icon">▣</span>
+            </div>
+            <div class="tracker">
+              <div class="tracker-status" id="labSessionStatus">IDLE</div>
+              <div class="tracker__row">
+                <span class="tracker__row-label">Session ID</span>
+                <span class="tracker__row-value" id="labSessionId" style="font-size:13px;">--</span>
+              </div>
+              <div class="tracker__row">
+                <span class="tracker__row-label">Started At</span>
+                <span class="tracker__row-value" id="labSessionStart">--:--:--</span>
+              </div>
+              <div class="tracker__row">
+                <span class="tracker__row-label">Duration</span>
+                <span class="tracker__row-value tracker__row-value--active" id="labSessionDuration">02:00:00</span>
+              </div>
+              <div class="tracker__row">
+                <span class="tracker__row-label">Remaining</span>
+                <span class="tracker__row-value tracker__row-value--remaining" id="labSessionRemaining">--:--:--</span>
+              </div>
+              <div class="tracker__bar-wrap">
+                <div class="tracker__bar tracker__bar--active" id="labSessionProgress" style="width:0%"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card animate-in" id="labHistoryStatsCard">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Session Statistics</span>
+              <span class="card__icon">⏱</span>
+            </div>
+            <div class="tracker">
+              <div class="tracker__row">
+                <span class="tracker__row-label">Total Sessions</span>
+                <span class="tracker__row-value" id="labTotalSessions">0</span>
+              </div>
+              <div class="tracker__row">
+                <span class="tracker__row-label">Total Lab Time</span>
+                <span class="tracker__row-value tracker__row-value--active" id="labTotalTime">00:00:00</span>
+              </div>
+              <div class="tracker__row">
+                <span class="tracker__row-label">Avg Session</span>
+                <span class="tracker__row-value" id="labAvgSession">00:00:00</span>
+              </div>
+              <div class="tracker__row">
+                <span class="tracker__row-label">Attendance Rate</span>
+                <span class="tracker__row-value" id="labAttendanceRate">0%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 2: Today's Schedule + History -->
+        <div class="grid grid--2 section">
+          <div class="card animate-in">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Today's Schedule</span>
+              <span class="card__icon">◎</span>
+            </div>
+            <div class="tracker" id="labScheduleList">
+              <div class="security-log__empty">Loading schedule...</div>
+            </div>
+          </div>
+
+          <div class="card animate-in">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Recent Sessions</span>
+              <span class="card__icon">✓</span>
+            </div>
+            <div class="security-log" id="labHistoryList">
+              <div class="security-log__empty">No completed sessions yet</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end data-section="lab-sessions" -->
+
+      <!-- ═══ Section: Attendance ═══ -->
+      <div data-section="attendance" style="display:none;">
+
+        <div class="main__header animate-in">
+          <h2 class="main__greeting">Attendance</h2>
+          <p class="main__sub">// ATTENDANCE RECORDS & ANALYTICS</p>
+        </div>
+
+        <!-- Row 1: Stats -->
+        <div class="grid grid--4 section">
+          <div class="card stat animate-in">
+            <div class="stat__value" id="attPercentage">0%</div>
+            <div class="stat__label">Attendance</div>
+          </div>
+          <div class="card stat animate-in">
+            <div class="stat__value" id="attPresentDays">0</div>
+            <div class="stat__label">Present Days</div>
+          </div>
+          <div class="card stat animate-in">
+            <div class="stat__value stat__value--orange" id="attLateDays">0</div>
+            <div class="stat__label">Late Days</div>
+          </div>
+          <div class="card stat animate-in">
+            <div class="stat__value" id="attStreak">0 days</div>
+            <div class="stat__label">Streak</div>
+          </div>
+        </div>
+
+        <!-- Row 2: Current Status + Mark Attendance -->
+        <div class="grid grid--2 section">
+          <div class="card animate-in" id="attStatusCard">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Current Status</span>
+              <span class="card__icon">◎</span>
+            </div>
+            <div class="tracker">
+              <div class="tracker-status" id="attStatusBadge">NO SESSION</div>
+              <div class="tracker__row">
+                <span class="tracker__row-label">Face Detection</span>
+                <span class="tracker__row-value" id="attFaceStatus" style="font-size:13px;">IDLE</span>
+              </div>
+              <div class="tracker__row">
+                <span class="tracker__row-label">Session Remaining</span>
+                <span class="tracker__row-value tracker__row-value--remaining" id="attSessionRemaining">--:--:--</span>
+              </div>
+              <div class="tracker__row">
+                <span class="tracker__row-label">Status</span>
+                <span class="tracker__row-value" id="attMarkReason" style="font-size:11px;">—</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card animate-in">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Mark Attendance</span>
+              <span class="card__icon">✓</span>
+            </div>
+            <div class="webcam" style="align-items:center; padding: 16px 0;">
+              <p style="font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); text-align:center; margin-bottom: 16px;">
+                Attendance is marked once per session.<br>
+                Ensure your face is visible to the camera.
+              </p>
+              <button class="webcam__btn webcam__btn--primary" id="attMarkBtn" disabled>UNAVAILABLE</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 3: Today's Records + History -->
+        <div class="grid grid--2 section">
+          <div class="card animate-in">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Today's Records</span>
+              <span class="card__icon">◎</span>
+            </div>
+            <div class="security-log" id="attTodayList">
+              <div class="security-log__empty">No attendance recorded today</div>
+            </div>
+          </div>
+
+          <div class="card animate-in">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Attendance History</span>
+              <span class="card__icon">▤</span>
+            </div>
+            <div class="security-log" id="attHistoryList">
+              <div class="security-log__empty">No attendance history yet</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end data-section="attendance" -->
+
+      <!-- ═══ Section: Assignments ═══ -->
+      <div data-section="assignments" style="display:none;">
+
+        <div class="main__header animate-in">
+          <h2 class="main__greeting">Assignments</h2>
+          <p class="main__sub">// EXPERIMENT SUBMISSIONS & TRACKING</p>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="grid grid--4 section">
+          <div class="card stat animate-in">
+            <div class="stat__value" id="assignPct">0%</div>
+            <div class="stat__label">Completion</div>
+          </div>
+          <div class="card stat animate-in">
+            <div class="stat__value" id="assignCompleted">0</div>
+            <div class="stat__label">Completed</div>
+          </div>
+          <div class="card stat animate-in">
+            <div class="stat__value stat__value--orange" id="assignPending">0</div>
+            <div class="stat__label">Pending</div>
+          </div>
+          <div class="card stat animate-in">
+            <div class="stat__value" id="assignVerified">0</div>
+            <div class="stat__label">Verified</div>
+          </div>
+        </div>
+
+        <!-- Progress + Analytics Row -->
+        <div class="grid grid--2 section">
+          <!-- Progress Card -->
+          <div class="card animate-in">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Completion Progress</span>
+              <span class="card__icon">▦</span>
+            </div>
+            <div class="stat" style="padding: 16px 0;">
+              <div class="stat__value" id="assignCount">0<span style="font-size: 20px; color: var(--text-muted);">/10</span></div>
+              <div class="stat__label">Experiments Completed</div>
+            </div>
+            <div class="progress" style="height: 8px;">
+              <div class="progress__bar" id="assignProgressBar" style="width: 0%"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 8px;">
+              <span style="font-family: var(--font-mono); font-size: 10px; color: var(--text-muted);">PROGRESS</span>
+              <span style="font-family: var(--font-mono); font-size: 10px; color: var(--glow-lime);" id="assignProgressPct">0%</span>
+            </div>
+            <div style="margin-top: 16px;">
+              <button class="task-reset-btn" id="assignResetBtn">⟳ Reset All</button>
+            </div>
+          </div>
+
+          <!-- Analytics Card -->
+          <div class="card animate-in">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Progress Analytics</span>
+              <span class="card__icon">◉</span>
+            </div>
+            <div class="assign-analytics" id="assignAnalytics">
+              <!-- Donut + Breakdown rendered by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Experiment List -->
+        <div class="section">
+          <div class="card animate-in">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Experiment Checklist</span>
+              <span class="card__icon">▤</span>
+            </div>
+            <div class="assign-filters" id="assignFilters">
+              <button class="assign-filter assign-filter--active" data-filter="all">All</button>
+              <button class="assign-filter" data-filter="pending">Pending</button>
+              <button class="assign-filter" data-filter="completed">Completed</button>
+              <button class="assign-filter" data-filter="verified">Verified</button>
+            </div>
+            <ul class="task-list" id="assignTaskList"></ul>
+          </div>
+        </div>
+
+      </div><!-- end data-section="assignments" -->
+
+      <!-- ═══ Section: Resources ═══ -->
+      <div data-section="resources" style="display:none;">
+
+        <div class="main__header animate-in">
+          <h2 class="main__greeting">Resources</h2>
+          <p class="main__sub">// LAB MATERIALS & REFERENCES</p>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="grid grid--4 section">
+          <div class="card stat animate-in">
+            <div class="stat__value" id="resTotal">0</div>
+            <div class="stat__label">Total</div>
+          </div>
+          <div class="card stat animate-in">
+            <div class="stat__value" id="resManuals">0</div>
+            <div class="stat__label">Manuals</div>
+          </div>
+          <div class="card stat animate-in">
+            <div class="stat__value stat__value--orange" id="resReferences">0</div>
+            <div class="stat__label">References</div>
+          </div>
+          <div class="card stat animate-in">
+            <div class="stat__value" id="resDownloads">0</div>
+            <div class="stat__label">Downloads</div>
+          </div>
+        </div>
+
+        <!-- Search + Filters -->
+        <div class="section">
+          <div class="card animate-in">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Resource Library</span>
+              <span class="card__icon">◈</span>
+            </div>
+            <div class="res-search-wrap">
+              <span class="res-search-icon">$</span>
+              <input type="text" class="res-search" id="resSearch" placeholder="grep resources..." autocomplete="off">
+            </div>
+            <div class="res-filters" id="resFilters">
+              <!-- Rendered by JS -->
+            </div>
+            <div class="res-terminal-prompt">ls ./resources/<span id="resFilterLabel">*</span></div>
+            <div class="res-grid" id="resList">
+              <!-- Resource cards rendered by JS -->
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end data-section="resources" -->
+
+      <!-- ═══ Section: Settings ═══ -->
+      <div data-section="settings" style="display:none;">
+
+        <div class="main__header animate-in">
+          <h2 class="main__greeting">Settings</h2>
+          <p class="main__sub">// ACCOUNT & PREFERENCES</p>
+        </div>
+
+        <!-- Profile + Session Info -->
+        <div class="grid grid--2 section">
+          <div class="card animate-in">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Profile</span>
+              <span class="card__icon">◉</span>
+            </div>
+            <div class="settings-profile">
+              <div class="settings-avatar" id="settingsAvatar">?</div>
+              <div class="settings-profile__info">
+                <div class="settings-profile__name" id="settingsName">--</div>
+                <div class="settings-profile__id" id="settingsUsn">--</div>
+                <div class="settings-profile__dept" id="settingsDept">--</div>
+              </div>
+            </div>
+            <div class="tracker">
+              <div class="tracker__row">
+                <span class="tracker__row-label">Email</span>
+                <span class="tracker__row-value" id="settingsEmail" style="font-size:12px;">--</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card animate-in">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Session</span>
+              <span class="card__icon">⏻</span>
+            </div>
+            <div class="tracker">
+              <div class="tracker__row">
+                <span class="tracker__row-label">Login Time</span>
+                <span class="tracker__row-value" id="settingsLoginTime" style="font-size:12px;">--</span>
+              </div>
+              <div class="tracker__row">
+                <span class="tracker__row-label">Expires</span>
+                <span class="tracker__row-value" id="settingsExpiry" style="font-size:12px;">--</span>
+              </div>
+              <div class="tracker__row">
+                <span class="tracker__row-label">Session ID</span>
+                <span class="tracker__row-value" id="settingsSessionId" style="font-size:10px; word-break:break-all;">--</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Change Password + Theme -->
+        <div class="grid grid--2 section">
+          <div class="card animate-in">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Change Password</span>
+              <span class="card__icon">🔒</span>
+            </div>
+            <form id="settingsPwForm" autocomplete="off">
+              <div class="settings-field">
+                <label class="settings-field__label">Current Password</label>
+                <div class="settings-pw-wrap">
+                  <input type="password" class="settings-input" id="settingsPwCurrent" placeholder="Enter current password" required minlength="6">
+                  <button type="button" class="settings-pw-toggle" id="settingsPwToggleCurrent">◎</button>
+                </div>
+              </div>
+              <div class="settings-field">
+                <label class="settings-field__label">New Password</label>
+                <div class="settings-pw-wrap">
+                  <input type="password" class="settings-input" id="settingsPwNew" placeholder="Min 6 chars, upper+lower+number" required minlength="6">
+                  <button type="button" class="settings-pw-toggle" id="settingsPwToggleNew">◎</button>
+                </div>
+              </div>
+              <div class="settings-field">
+                <label class="settings-field__label">Confirm New Password</label>
+                <div class="settings-pw-wrap">
+                  <input type="password" class="settings-input" id="settingsPwConfirm" placeholder="Re-enter new password" required minlength="6">
+                  <button type="button" class="settings-pw-toggle" id="settingsPwToggleConfirm">◎</button>
+                </div>
+              </div>
+              <button type="submit" class="settings-btn">Update Password</button>
+              <div class="settings-msg" id="settingsPwMsg"></div>
+            </form>
+          </div>
+
+          <div class="card animate-in">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Theme Accent</span>
+              <span class="card__icon">◈</span>
+            </div>
+            <p style="font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 14px;">SELECT ACCENT COLOR</p>
+            <div class="settings-swatches" id="settingsSwatches">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Preferences Toggles -->
+        <div class="grid grid--2 section">
+          <div class="card animate-in">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Detection & Capture</span>
+              <span class="card__icon">📷</span>
+            </div>
+            <div class="settings-row">
+              <div>
+                <div class="settings-row__label">Face Detection</div>
+                <div class="settings-row__sub">Auto-detect face via webcam</div>
+              </div>
+              <label class="settings-toggle">
+                <input type="checkbox" id="settingsToggleFaceDetect">
+                <span class="settings-toggle__track"></span>
+              </label>
+            </div>
+            <div class="settings-row">
+              <div>
+                <div class="settings-row__label">Auto-Capture</div>
+                <div class="settings-row__sub">Periodic webcam snapshots</div>
+              </div>
+              <label class="settings-toggle">
+                <input type="checkbox" id="settingsToggleAutoCapture">
+                <span class="settings-toggle__track"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="card animate-in">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Notifications & UI</span>
+              <span class="card__icon">🔔</span>
+            </div>
+            <div class="settings-row">
+              <div>
+                <div class="settings-row__label">Notifications</div>
+                <div class="settings-row__sub">Toast alerts and warnings</div>
+              </div>
+              <label class="settings-toggle">
+                <input type="checkbox" id="settingsToggleNotifs">
+                <span class="settings-toggle__track"></span>
+              </label>
+            </div>
+            <div class="settings-row">
+              <div>
+                <div class="settings-row__label">Sound Effects</div>
+                <div class="settings-row__sub">Audio feedback on events</div>
+              </div>
+              <label class="settings-toggle">
+                <input type="checkbox" id="settingsToggleSounds">
+                <span class="settings-toggle__track"></span>
+              </label>
+            </div>
+            <div class="settings-row">
+              <div>
+                <div class="settings-row__label">Compact Mode</div>
+                <div class="settings-row__sub">Reduced spacing and padding</div>
+              </div>
+              <label class="settings-toggle">
+                <input type="checkbox" id="settingsToggleCompact">
+                <span class="settings-toggle__track"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Logout -->
+        <div class="section">
+          <div class="card animate-in settings-logout-card">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Disconnect</span>
+              <span class="card__icon">⏻</span>
+            </div>
+            <p style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); margin-bottom: 14px;">
+              End your current session and return to the login screen. All unsaved progress will be preserved.
+            </p>
+            <button class="settings-btn settings-btn--danger" id="settingsLogoutBtn">⏻ Logout</button>
+          </div>
+        </div>
+
+      </div><!-- end data-section="settings" -->
+
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/webcam.js"></script>
+  <script src="js/faceDetection.js"></script>
+  <script src="js/sessionManager.js"></script>
+  <script src="js/labSessions.js"></script>
+  <script src="js/attendance.js"></script>
+  <script src="js/timeTracker.js"></script>
+  <script src="js/tasks.js"></script>
+  <script src="js/resources.js"></script>
+  <script src="js/settings.js"></script>
+  <script src="js/securityMonitor.js"></script>
+  <script src="js/navigation.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      // Guard: redirect if not logged in as student
+      var session = UI.guardDashboard();
+      if (!session) return;
+
+      // Populate user info
+      UI.populateUserInfo(session);
+
+      // Display lab name
+      var labNameEl = document.getElementById('labNameDisplay');
+      if (labNameEl && session.lab) {
+        labNameEl.textContent = session.lab.toUpperCase() + ' SESSION ACTIVE';
+      }
+
+      // Start clocks
+      UI.startClock(document.getElementById('navClock'), document.getElementById('navDate'));
+
+      // Lab timer display (will be updated by SessionManager tick events)
+      var labTimerEl = document.getElementById('labTimer');
+      var labProgressEl = document.getElementById('labProgress');
+      if (labTimerEl) labTimerEl.textContent = '02:00:00';
+
+      // Sidebar
+      UI.initSidebar(
+        document.getElementById('sidebarToggle'),
+        document.getElementById('sidebar'),
+        document.getElementById('sidebarOverlay')
+      );
+
+      // ── Navigation ──
+      Navigation.init({
+        navEl: document.getElementById('sidebarNav'),
+        mainEl: document.getElementById('mainContent')
+      });
+
+      // Populate dynamic section content on navigate
+      Navigation.on('navigate', function (data) {
+        var s = Auth.getStudentSession();
+        if (!s) return;
+
+        // Lab Sessions section
+        if (data.section === 'lab-sessions') {
+          LabSessions.renderCurrentSession(document.getElementById('labCurrentCard'));
+          LabSessions.renderHistoryStats(document.getElementById('labHistoryStatsCard'));
+          LabSessions.renderSchedule(document.getElementById('labScheduleList'));
+          LabSessions.renderHistory(document.getElementById('labHistoryList'));
+        }
+
+        // Attendance section
+        if (data.section === 'attendance') {
+          var attSection = document.querySelector('[data-section="attendance"]');
+          Attendance.renderStatus(document.getElementById('attStatusCard'));
+          Attendance.renderStats(attSection);
+          Attendance.renderTodayRecords(document.getElementById('attTodayList'));
+          Attendance.renderHistory(document.getElementById('attHistoryList'));
+        }
+
+        // Dashboard section — refresh attendance overview and stats
+        if (data.section === 'dashboard') {
+          _refreshDashAttendance();
+          _refreshDashStats();
+        }
+
+        // Assignments section
+        if (data.section === 'assignments') {
+          Tasks.renderAssignments();
+        }
+
+        // Resources section
+        if (data.section === 'resources') {
+          Resources.renderResources();
+        }
+
+        // Settings section
+        if (data.section === 'settings') {
+          Settings.renderSettings();
+        }
+      });
+
+      function _esc(str) {
+        if (!str) return '';
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+      }
+
+      // ── Attendance Mark Button ──
+      var attMarkBtn = document.getElementById('attMarkBtn');
+      if (attMarkBtn) {
+        attMarkBtn.addEventListener('click', function () {
+          var result = Attendance.mark();
+          if (result.success) {
+            showToast({ type: 'success', title: 'Attendance', message: result.message });
+            // Refresh attendance section
+            var attSec = document.querySelector('[data-section="attendance"]');
+            Attendance.renderStatus(document.getElementById('attStatusCard'));
+            Attendance.renderStats(attSec);
+            Attendance.renderTodayRecords(document.getElementById('attTodayList'));
+            // Refresh dashboard overview
+            _refreshDashAttendance();
+          } else {
+            showToast({ type: 'warning', title: 'Attendance', message: result.message });
+          }
+        });
+      }
+
+      // ── Update attendance on session events ──
+      SessionManager.on('attendance', function () {
+        if (Navigation.getCurrentSection() === 'attendance') {
+          var attSec2 = document.querySelector('[data-section="attendance"]');
+          Attendance.renderStatus(document.getElementById('attStatusCard'));
+          Attendance.renderStats(attSec2);
+          Attendance.renderTodayRecords(document.getElementById('attTodayList'));
+          Attendance.renderHistory(document.getElementById('attHistoryList'));
+        }
+        _refreshDashAttendance();
+        _refreshDashStats();
+
+        // Update lab sessions attendance rate
+        if (Navigation.getCurrentSection() === 'lab-sessions') {
+          LabSessions.renderHistoryStats(document.getElementById('labHistoryStatsCard'));
+        }
+      });
+
+      SessionManager.on('start', function () {
+        // Refresh attendance status when session starts
+        Attendance.renderStatus(document.getElementById('attStatusCard'));
+        _refreshDashAttendance();
+      });
+
+      var _tickCounter = 0;
+      SessionManager.on('tick', function () {
+        _tickCounter++;
+        // Update attendance status in real-time if section is visible
+        if (Navigation.getCurrentSection() === 'attendance') {
+          Attendance.renderStatus(document.getElementById('attStatusCard'));
+        }
+        // Keep dashboard overview updated
+        _refreshDashAttendance();
+        _refreshDashStats();
+
+        // Refresh lab sessions stats every 10 ticks (~10 seconds)
+        if (_tickCounter % 10 === 0 && Navigation.getCurrentSection() === 'lab-sessions') {
+          LabSessions.renderHistoryStats(document.getElementById('labHistoryStatsCard'));
+          LabSessions.renderCurrentSession(document.getElementById('labCurrentCard'));
+        }
+      });
+
+      // ── Dashboard Attendance Overview Refresh ──
+      function _refreshDashAttendance() {
+        var stats = Attendance.getStats();
+        var status = Attendance.getStatus();
+        var session = (typeof Auth !== 'undefined') ? Auth.getStudentSession() : null;
+
+        // Donut percentage
+        var pctEl = document.getElementById('dashAttPct');
+        var donutEl = document.getElementById('attendanceDonut');
+        if (pctEl) pctEl.textContent = stats.percentage + '%';
+        if (donutEl) {
+          var offset = 100 - stats.percentage;
+          donutEl.setAttribute('stroke-dashoffset', String(offset));
+        }
+
+        // Legend
+        var presentEl = document.getElementById('dashAttPresent');
+        var lateEl = document.getElementById('dashAttLate');
+        var absentEl = document.getElementById('dashAttAbsent');
+        if (presentEl) presentEl.textContent = 'Present: ' + stats.presentDays + ' days';
+        if (lateEl) lateEl.textContent = 'Late: ' + stats.lateDays + ' days';
+        if (absentEl) absentEl.textContent = 'Absent: ' + stats.absentDays + ' days';
+
+        // Lab name
+        var labEl = document.getElementById('dashLabName');
+        if (labEl && session) labEl.textContent = session.lab || '—';
+
+        // Today's status
+        var todayEl = document.getElementById('dashAttTodayStatus');
+        if (todayEl) {
+          if (status.marked) {
+            todayEl.textContent = 'MARKED';
+            todayEl.style.color = 'var(--glow-lime)';
+          } else if (status.sessionActive) {
+            todayEl.textContent = 'NOT MARKED';
+            todayEl.style.color = 'var(--accent-orange)';
+          } else {
+            todayEl.textContent = 'NO SESSION';
+            todayEl.style.color = 'var(--text-muted)';
+          }
+        }
+      }
+
+      // ── Dashboard Stats Refresh ──
+
+      function _refreshDashStats() {
+        // Attendance percentage
+        var attStats = Attendance.getStats();
+        var attEl = document.getElementById('dashStatAttendance');
+        if (attEl) attEl.textContent = attStats.percentage + '%';
+
+        // Tasks done
+        var taskStats = (typeof Tasks !== 'undefined') ? Tasks.getStats() : { completed: 0, pending: 0 };
+        var tasksDoneEl = document.getElementById('dashStatTasksDone');
+        if (tasksDoneEl) tasksDoneEl.textContent = taskStats.completed;
+
+        // Pending tasks
+        var pendingEl = document.getElementById('dashStatPending');
+        if (pendingEl) pendingEl.textContent = taskStats.pending;
+
+        // Total sessions — use LabSessions.getStats() as single source of truth
+        var labStats = LabSessions.getStats();
+        var sessionsEl = document.getElementById('dashStatSessions');
+        if (sessionsEl) sessionsEl.textContent = labStats.totalSessions;
+      }
+
+      // Notifications
+      UI.initNotifications(
+        document.getElementById('notifBadge'),
+        document.getElementById('notifPanel'),
+        document.getElementById('notifToggle')
+      );
+
+      // Initial stats refresh (replaces hardcoded animateStats)
+      _refreshDashStats();
+
+      // ── Webcam Module ──
+      var cam = Webcam.init({
+        video:      document.getElementById('webcamVideo'),
+        canvas:     document.getElementById('webcamCanvas'),
+        overlay:    document.getElementById('webcamOverlay'),
+        status:     document.getElementById('webcamStatus'),
+        captureBtn: document.getElementById('webcamCapture'),
+        toggleBtn:  document.getElementById('webcamToggle')
+      });
+
+      // Click overlay to start webcam
+      var webcamOverlay = document.getElementById('webcamOverlay');
+      if (webcamOverlay) {
+        webcamOverlay.style.cursor = 'pointer';
+        webcamOverlay.addEventListener('click', function () {
+          if (!Webcam.isActive()) {
+            Webcam.start().catch(function (err) {
+              console.warn('[Webcam] Failed to start from overlay click:', err);
+            });
+          }
+        });
+      }
+
+      // Capture preview
+      var previewEl = document.getElementById('webcamPreview');
+      var previewImg = document.getElementById('webcamPreviewImg');
+      var previewTime = document.getElementById('webcamPreviewTime');
+      var previewSave = document.getElementById('webcamPreviewSave');
+      var previewClose = document.getElementById('webcamPreviewClose');
+      var _lastCaptureData = null;
+
+      Webcam.on('capture', function (data) {
+        console.log('[Webcam] Frame captured at', data.timeFormatted);
+        _lastCaptureData = data;
+        if (previewImg && previewEl) {
+          previewImg.src = data.dataURL;
+          if (previewTime) previewTime.textContent = data.timeFormatted;
+          previewEl.style.display = '';
+        }
+
+        // Auto-mark attendance on capture
+        if (!SessionManager.isAttendanceMarked()) {
+          var attResult = Attendance.mark();
+          if (attResult.success) {
+            console.log('[Dashboard] Attendance auto-marked on capture');
+            showToast({ type: 'success', title: 'Attendance Marked', message: 'Attendance recorded for this session.' });
+            // Refresh attendance section if visible
+            if (Navigation.getCurrentSection() === 'attendance') {
+              var attSec = document.querySelector('[data-section="attendance"]');
+              Attendance.renderStatus(document.getElementById('attStatusCard'));
+              Attendance.renderStats(attSec);
+              Attendance.renderTodayRecords(document.getElementById('attTodayList'));
+              Attendance.renderHistory(document.getElementById('attHistoryList'));
+            }
+            // Always refresh dashboard overview
+            _refreshDashAttendance();
+          } else {
+            console.log('[Dashboard] Auto-attendance skipped:', attResult.message);
+          }
+        }
+      });
+
+      if (previewSave) {
+        previewSave.addEventListener('click', function () {
+          if (!_lastCaptureData) return;
+          var link = document.createElement('a');
+          link.download = 'webcam-capture-' + _lastCaptureData.timestamp + '.png';
+          link.href = _lastCaptureData.dataURL;
+          link.click();
+          console.log('[Webcam] Capture saved');
+        });
+      }
+
+      if (previewClose) {
+        previewClose.addEventListener('click', function () {
+          if (previewEl) previewEl.style.display = 'none';
+          _lastCaptureData = null;
+        });
+      }
+
+      // ── Face Detection Module ──
+      var faceDetectBtn = document.getElementById('faceDetectToggle');
+      var face = FaceDetection.init({
+        videoEl:          document.getElementById('webcamVideo'),
+        overlayCanvas:    document.getElementById('faceOverlay'),
+        statusEl:         document.getElementById('faceStatus'),
+        confidenceBarEl:  document.getElementById('faceConfBar'),
+        confidenceTextEl: document.getElementById('faceConfText'),
+        faceCountEl:      document.getElementById('faceCount')
+      });
+
+      var faceDetectActive = false;
+
+      // Enable detect button when webcam starts, and auto-start detection
+      Webcam.on('start', function () {
+        console.log('[Dashboard] Webcam started, enabling face detection');
+        if (faceDetectBtn) faceDetectBtn.disabled = false;
+
+        // Auto-start face detection when webcam starts
+        if (!faceDetectActive) {
+          FaceDetection.start().then(function () {
+            faceDetectActive = true;
+            if (faceDetectBtn) faceDetectBtn.textContent = 'Stop Detect';
+            console.log('[Dashboard] Face detection auto-started');
+          }).catch(function (err) {
+            console.warn('[Dashboard] Auto-start face detection failed:', err);
+          });
+        }
+      });
+
+      Webcam.on('stop', function () {
+        console.log('[Dashboard] Webcam stopped, disabling face detection');
+        if (faceDetectBtn) faceDetectBtn.disabled = true;
+        if (faceDetectActive) {
+          FaceDetection.stop();
+          faceDetectActive = false;
+          if (faceDetectBtn) faceDetectBtn.textContent = 'Detect';
+        }
+      });
+
+      // Face detection error handler
+      FaceDetection.on('error', function (data) {
+        console.error('[Dashboard] FaceDetection error:', data.message);
+        showToast({
+          type: 'error',
+          title: 'Detection Error',
+          message: data.message || 'Face detection encountered an error'
+        });
+      });
+
+      // Toggle face detection
+      if (faceDetectBtn) {
+        faceDetectBtn.addEventListener('click', function () {
+          if (!faceDetectActive) {
+            FaceDetection.start().then(function () {
+              faceDetectActive = true;
+              faceDetectBtn.textContent = 'Stop Detect';
+              console.log('[Dashboard] Face detection started via button');
+            }).catch(function (err) {
+              console.warn('[Dashboard] Failed to start face detection:', err);
+            });
+          } else {
+            FaceDetection.stop();
+            faceDetectActive = false;
+            faceDetectBtn.textContent = 'Detect';
+            console.log('[Dashboard] Face detection stopped via button');
+          }
+        });
+      }
+
+      // ── Time Tracker Module ──
+      var tracker = TimeTracker.init({
+        activeTimeEl:    document.getElementById('trackerActive'),
+        totalTimeEl:     document.getElementById('trackerTotal'),
+        remainingTimeEl: document.getElementById('trackerRemaining'),
+        statusEl:        document.getElementById('trackerStatus'),
+        progressEl:      document.getElementById('trackerTotalBar'),
+        activeBarEl:     document.getElementById('trackerActiveBar')
+      });
+
+      var trackerPauseCount = 0;
+
+      // Wire FaceDetection → TimeTracker
+      FaceDetection.on('faceDetected', function () {
+        tracker.onFaceDetected();
+      });
+
+      FaceDetection.on('noFace', function (data) {
+        if (data.timerPaused) {
+          tracker.onFaceLost();
+        }
+      });
+
+      FaceDetection.on('timerPaused', function () {
+        tracker.onFaceLost();
+      });
+
+      FaceDetection.on('timerResumed', function () {
+        tracker.onFaceDetected();
+      });
+
+      // Wire SessionManager → TimeTracker and UI
+      SessionManager.on('tick', function (sessionInfo) {
+        tracker.onSessionTick(sessionInfo);
+
+        // Update session timer display
+        var sessionTimerEl = document.getElementById('sessionTimer');
+        var sessionProgressEl = document.getElementById('sessionProgress');
+        var sessionLabelEl = document.getElementById('sessionLabel');
+        if (sessionTimerEl) {
+          sessionTimerEl.textContent = sessionInfo.remainingFormatted;
+        }
+        if (sessionProgressEl) {
+          sessionProgressEl.style.width = (100 - sessionInfo.progress) + '%';
+          // Change color based on remaining time
+          if (sessionInfo.remaining <= 300) {
+            sessionProgressEl.style.background = 'var(--error-red)';
+          } else if (sessionInfo.remaining <= 900) {
+            sessionProgressEl.style.background = 'var(--accent-orange)';
+          } else {
+            sessionProgressEl.style.background = 'var(--glow-lime)';
+          }
+        }
+        if (sessionLabelEl) {
+          if (sessionInfo.remaining <= 300) {
+            sessionLabelEl.textContent = 'CRITICAL - Session ending soon!';
+            sessionLabelEl.style.color = 'var(--error-red)';
+          } else if (sessionInfo.remaining <= 900) {
+            sessionLabelEl.textContent = 'WARNING - 15 minutes remaining';
+            sessionLabelEl.style.color = 'var(--accent-orange)';
+          } else {
+            sessionLabelEl.textContent = 'Remaining Time';
+            sessionLabelEl.style.color = '';
+          }
+        }
+
+        // Update lab timer display (same as session timer for lab context)
+        var labTimerEl = document.getElementById('labTimer');
+        var labProgressEl = document.getElementById('labProgress');
+        if (labTimerEl) {
+          labTimerEl.textContent = sessionInfo.remainingFormatted;
+        }
+        if (labProgressEl) {
+          labProgressEl.style.width = sessionInfo.progress + '%';
+          if (sessionInfo.remaining <= 300) {
+            labProgressEl.style.background = 'var(--error-red)';
+          } else if (sessionInfo.remaining <= 900) {
+            labProgressEl.style.background = 'var(--accent-orange)';
+          } else {
+            labProgressEl.style.background = 'var(--accent-orange)';
+          }
+        }
+
+        // Update lab sessions section if visible
+        if (Navigation.getCurrentSection() === 'lab-sessions') {
+          LabSessions.renderCurrentSession(document.getElementById('labCurrentCard'));
+        }
+      });
+
+      SessionManager.on('start', function (sessionInfo) {
+        tracker.start();
+        console.log('[Session] Lab session started. Duration: 2 hours');
+
+        // Record session in Lab Sessions history so stats populate immediately
+        if (sessionInfo && sessionInfo.sessionId) {
+          LabSessions.recordSession({
+            sessionId: sessionInfo.sessionId,
+            startedAt: sessionInfo.startedAt,
+            elapsed: 0,
+            attendanceMarked: sessionInfo.attendanceMarked || false
+          });
+        }
+
+        // Refresh lab sessions section
+        LabSessions.renderCurrentSession(document.getElementById('labCurrentCard'));
+        LabSessions.renderHistoryStats(document.getElementById('labHistoryStatsCard'));
+        LabSessions.renderSchedule(document.getElementById('labScheduleList'));
+        LabSessions.renderHistory(document.getElementById('labHistoryList'));
+
+        // Refresh dashboard stats
+        _refreshDashStats();
+      });
+
+      SessionManager.on('warning', function (data) {
+        console.warn('[Session]', data.message);
+        // Show toast notification for warnings
+        showToast({
+          type: 'warning',
+          title: 'Session Warning',
+          message: data.message + ' (' + data.remainingFormatted + ' remaining)'
+        });
+      });
+
+      SessionManager.on('expired', function (data) {
+        tracker.onSessionExpired();
+        FaceDetection.stop();
+        Webcam.stop(true);
+        SecurityMonitor.stop();
+
+        // Record completed session in history
+        if (data && data.session) {
+          LabSessions.recordSession(data.session);
+        }
+
+        // Refresh lab sessions section
+        LabSessions.renderCurrentSession(document.getElementById('labCurrentCard'));
+        LabSessions.renderHistoryStats(document.getElementById('labHistoryStatsCard'));
+        LabSessions.renderHistory(document.getElementById('labHistoryList'));
+
+        // Refresh dashboard stats
+        _refreshDashStats();
+        _refreshDashAttendance();
+
+        // Show expiry notification
+        showToast({
+          type: 'error',
+          title: 'Session Expired',
+          message: 'Lab session has ended. Redirecting to login...'
+        });
+
+        // Cleanup will be handled by SessionManager.cleanup() after 3s delay
+      });
+
+      // Helper function to show toast notifications
+      function showToast(options) {
+        var container = document.getElementById('toastContainer');
+        if (!container) return;
+
+        var toast = document.createElement('div');
+        toast.className = 'toast toast--' + options.type;
+
+        var iconMap = { success: '✓', error: '✗', warning: '⚠', info: 'ℹ' };
+        var icon = iconMap[options.type] || 'ℹ';
+
+        toast.innerHTML =
+          '<div class="toast__icon">' + icon + '</div>' +
+          '<div class="toast__content">' +
+            '<div class="toast__title">' + options.title + '</div>' +
+            '<div class="toast__message">' + options.message + '</div>' +
+          '</div>' +
+          '<button class="toast__close" onclick="this.parentElement.remove()">×</button>';
+
+        container.appendChild(toast);
+
+        // Trigger animation
+        requestAnimationFrame(function () {
+          toast.classList.add('visible');
+        });
+
+        // Auto-remove after 8 seconds
+        setTimeout(function () {
+          toast.classList.remove('visible');
+          setTimeout(function () {
+            if (toast.parentElement) toast.remove();
+          }, 300);
+        }, 8000);
+      }
+
+      // Start SessionManager
+      SessionManager.start();
+
+      // Initial dashboard attendance overview refresh
+      _refreshDashAttendance();
+      _refreshDashStats();
+
+      // TimeTracker events — update breakdown display
+      tracker.on('paused', function (data) {
+        trackerPauseCount++;
+        var pauseCountEl = document.getElementById('trackerPauseCount');
+        var pauseReasonEl = document.getElementById('trackerPauseReason');
+        if (pauseCountEl) pauseCountEl.textContent = trackerPauseCount;
+        if (pauseReasonEl) pauseReasonEl.textContent = (data.reason || '—').replace(/_/g, ' ').toUpperCase();
+      });
+
+      tracker.on('tick', function (info) {
+        var pctEl = document.getElementById('trackerActivePct');
+        if (pctEl) pctEl.textContent = Math.round(info.activePercentage) + '%';
+
+        var stateEl = document.getElementById('trackerState');
+        if (stateEl) stateEl.textContent = info.isTracking ? 'TRACKING' : 'PAUSED';
+      });
+
+      // ── Tasks Module ──
+      var tasks = Tasks.init({
+        listEl:        document.getElementById('taskList'),
+        progressEl:    document.getElementById('taskProgressBar'),
+        progressPctEl: document.getElementById('taskProgressPct'),
+        countEl:       document.getElementById('taskCount'),
+        resetBtnEl:    document.getElementById('taskResetBtn')
+      });
+
+      Tasks.on('toggle', function (data) {
+        var stats = Tasks.getStats();
+        console.log('[Tasks] Toggled:', data.experiment.title, '—', data.experiment.completed ? 'Done' : 'Pending');
+        console.log('[Tasks] Progress:', stats.completed + '/' + stats.total, '(' + stats.percentage + '%)');
+        _refreshDashStats();
+      });
+
+      Tasks.on('verify', function (data) {
+        console.log('[Tasks] Verified:', data.experiment.title, 'by', data.experiment.verifiedBy);
+      });
+
+      Tasks.on('reset', function () {
+        console.log('[Tasks] All experiments reset to default');
+      });
+
+      // Refresh assignments section when data changes (if currently viewing it)
+      Tasks.on('change', function () {
+        if (Navigation.getCurrentSection() === 'assignments') {
+          Tasks.renderAssignments();
+        }
+      });
+
+      // ── Security Monitor Module ──
+      var secMonitor = SecurityMonitor.init({
+        toastContainerEl: document.getElementById('securityToasts'),
+        violationListEl:  document.getElementById('securityLog'),
+        badgeEl:          document.getElementById('securityBadge'),
+        panelEl:          null
+      });
+
+      SecurityMonitor.start();
+
+      // ── Resources Module ──
+      Resources.init();
+
+      // ── Settings Module ──
+      Settings.init();
+
+      // Wire FaceDetection → SecurityMonitor
+      FaceDetection.on('multiFace', function (data) {
+        SecurityMonitor.recordViolation(
+          SecurityMonitor.VIOLATION.MULTI_FACE,
+          data.count + ' faces detected (confidence: ' + Math.round(data.confidence * 100) + '%)'
+        );
+      });
+
+      FaceDetection.on('timerPaused', function () {
+        SecurityMonitor.recordViolation(
+          SecurityMonitor.VIOLATION.NO_FACE,
+          'Face not visible for 5+ seconds — uptime paused'
+        );
+      });
+
+      // Wire SecurityMonitor events → update stats display
+      SecurityMonitor.on('violation', function (v) {
+        var summary = SecurityMonitor.getSummary();
+        var totalEl = document.getElementById('secTotal');
+        var medEl = document.getElementById('secMedium');
+        var highEl = document.getElementById('secHigh');
+        var flaggedEl = document.getElementById('secFlagged');
+
+        if (totalEl) totalEl.textContent = summary.total;
+        if (medEl) medEl.textContent = summary.byType.inactivity + summary.byType.no_face;
+        if (highEl) highEl.textContent = summary.byType.tab_switch + summary.byType.multi_face + summary.byType.dev_tools;
+        if (flaggedEl) {
+          flaggedEl.textContent = summary.flagged ? 'YES' : '—';
+          flaggedEl.className = 'security-stat__value' + (summary.flagged ? ' security-stat__value--danger' : '');
+        }
+      });
+
+      SecurityMonitor.on('flagged', function (data) {
+        console.warn('[Security] Student flagged:', data.label, '(' + data.count + ' violations)');
+      });
+
+      // Clear log button
+      var secClearBtn = document.getElementById('secClearLog');
+      if (secClearBtn) {
+        secClearBtn.addEventListener('click', function () {
+          SecurityMonitor.clearLog();
+          var totalEl = document.getElementById('secTotal');
+          var medEl = document.getElementById('secMedium');
+          var highEl = document.getElementById('secHigh');
+          var flaggedEl = document.getElementById('secFlagged');
+          if (totalEl) totalEl.textContent = '0';
+          if (medEl) medEl.textContent = '0';
+          if (highEl) highEl.textContent = '0';
+          if (flaggedEl) { flaggedEl.textContent = '—'; flaggedEl.className = 'security-stat__value'; }
+        });
+      }
+
+      // Stop security monitor on session expiry
+      SessionManager.on('expired', function () {
+        SecurityMonitor.stop();
+      });
+
+      // Logout
+      UI.initLogout(document.getElementById('btnLogout'));
+    })();
+  </script>
+</body>
+</html>

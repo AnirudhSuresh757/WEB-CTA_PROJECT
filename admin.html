@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ADMIN // DASHBOARD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+  <!-- Animated Background -->
+  <div class="bg-canvas" aria-hidden="true">
+    <div class="bg-grid"></div>
+    <div class="bg-pulse bg-pulse--lime"></div>
+    <div class="bg-pulse bg-pulse--orange"></div>
+    <div class="bg-pulse bg-pulse--cyan"></div>
+    <div class="bg-data-stream"></div>
+    <div class="bg-data-stream"></div>
+    <div class="bg-data-stream"></div>
+    <div class="bg-data-stream"></div>
+    <div class="bg-data-stream"></div>
+    <div class="bg-particles">
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+    </div>
+    <div class="bg-scanline"></div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Sidebar Overlay (mobile) -->
+  <div class="overlay" id="sidebarOverlay"></div>
+
+  <!-- Dashboard Layout -->
+  <div class="admin-dash">
+
+    <!-- ═══ Sidebar ═══ -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__brand">
+        <div class="sidebar__brand-icon">&gt;_</div>
+        <span class="sidebar__brand-text">Admin<br>Control</span>
+      </div>
+
+      <div class="sidebar__user">
+        <div class="sidebar__user-name" data-user-name>Loading...</div>
+        <div class="sidebar__user-id" data-user-id>------</div>
+        <div class="sidebar__user-role" data-user-role>--</div>
+      </div>
+
+      <nav class="sidebar__nav">
+        <a href="#" class="sidebar__link active" data-section="dashboard">
+          <span class="sidebar__link-icon">◆</span>
+          Dashboard
+        </a>
+        <a href="#" class="sidebar__link" data-section="student-mgmt">
+          <span class="sidebar__link-icon">◉</span>
+          Student CRUD
+        </a>
+        <a href="#" class="sidebar__link">
+          <span class="sidebar__link-icon">◎</span>
+          Attendance
+        </a>
+        <a href="#" class="sidebar__link">
+          <span class="sidebar__link-icon">▣</span>
+          Experiments
+        </a>
+        <a href="#" class="sidebar__link">
+          <span class="sidebar__link-icon">▤</span>
+          Reports
+        </a>
+        <a href="#" class="sidebar__link">
+          <span class="sidebar__link-icon">⚙</span>
+          Settings
+        </a>
+      </nav>
+
+      <div class="sidebar__footer">
+        <button class="sidebar__logout" id="btnLogout">
+          <span>⏻</span>
+          Disconnect
+        </button>
+      </div>
+    </aside>
+
+    <!-- ═══ Navbar ═══ -->
+    <header class="navbar">
+      <div class="navbar__left">
+        <button class="navbar__toggle" id="sidebarToggle" aria-label="Toggle sidebar">☰</button>
+        <h1 class="navbar__title">Admin Dashboard</h1>
+      </div>
+      <div class="navbar__right">
+        <div class="navbar__datetime">
+          <div id="navDate">---</div>
+          <div id="navClock">--:--:--</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ═══ Main Content ═══ -->
+    <main class="main">
+
+      <!-- Header -->
+      <div class="main__header animate-in">
+        <div>
+          <h2 class="main__greeting">Welcome, <span data-user-name>Admin</span></h2>
+          <p class="main__sub">// FACULTY CONTROL PANEL</p>
+        </div>
+        <div class="main__actions">
+          <button class="btn-export btn-export--csv" id="btnExportCsv">↓ Export CSV</button>
+          <button class="btn-export btn-export--pdf" id="btnExportPdf">↓ Export PDF</button>
+        </div>
+      </div>
+
+      <!-- Row 1: Stats -->
+      <div class="grid grid--4 section">
+        <div class="card stat animate-in">
+          <div class="stat__value" id="liveCount">0</div>
+          <div class="stat__label">Live Active</div>
+        </div>
+        <div class="card stat animate-in">
+          <div class="stat__value" id="totalStudents">0</div>
+          <div class="stat__label">Total Students</div>
+        </div>
+        <div class="card stat animate-in">
+          <div class="stat__value stat__value--lime" id="avgAttendance">0%</div>
+          <div class="stat__label">Avg Attendance</div>
+        </div>
+        <div class="card stat animate-in">
+          <div class="stat__value stat__value--red" id="totalViolations">0</div>
+          <div class="stat__label">Violations</div>
+        </div>
+      </div>
+
+      <!-- Row 2: Session Info + Completion -->
+      <div class="grid grid--2-1 section">
+        <!-- Session Info -->
+        <div class="card animate-in">
+          <div class="corner-accent corner-accent--tl"></div>
+          <div class="corner-accent corner-accent--br"></div>
+          <div class="card__header">
+            <span class="card__title">Session Analytics</span>
+            <span class="card__icon">◉</span>
+            <span class="live-indicator"><span class="live-indicator__dot"></span>LIVE</span>
+          </div>
+          <div id="sessionInfo">
+            <!-- Dynamically rendered -->
+          </div>
+        </div>
+
+        <!-- Completion Donut -->
+        <div class="card animate-in">
+          <div class="corner-accent corner-accent--tl"></div>
+          <div class="corner-accent corner-accent--br"></div>
+          <div class="card__header">
+            <span class="card__title">Completion Rate</span>
+            <span class="card__icon">◎</span>
+          </div>
+          <div class="donut-wrap">
+            <div class="donut">
+              <svg class="donut__svg" viewBox="0 0 36 36">
+                <circle class="donut__track" cx="18" cy="18" r="15.915"></circle>
+                <circle class="donut__fill donut__fill--lime" cx="18" cy="18" r="15.915"
+                  stroke-dasharray="100"
+                  stroke-dashoffset="20"
+                  id="completionDonut"></circle>
+              </svg>
+              <div class="donut__center">
+                <span class="donut__pct" id="avgCompletion">80%</span>
+                <span class="donut__pct-label">Average</span>
+              </div>
+            </div>
+            <div class="donut__legend">
+              <div class="donut__legend-item">
+                <span class="donut__legend-dot" style="background: var(--glow-lime)"></span>
+                Completed: 40/50 exps
+              </div>
+              <div class="donut__legend-item">
+                <span class="donut__legend-dot" style="background: var(--accent-orange)"></span>
+                Pending: 10 exps
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 3: Attendance Heatmap -->
+      <div class="section">
+        <div class="card animate-in">
+          <div class="corner-accent corner-accent--tl"></div>
+          <div class="corner-accent corner-accent--br"></div>
+          <div class="card__header">
+            <span class="card__title">Attendance Heatmap (Last 4 Weeks)</span>
+            <span class="card__icon">▦</span>
+          </div>
+          <div class="heatmap" id="heatmapGrid">
+            <!-- Dynamically rendered -->
+          </div>
+          <div class="heatmap__labels">
+            <span class="heatmap__label">4 weeks ago</span>
+            <span class="heatmap__label">3 weeks ago</span>
+            <span class="heatmap__label">2 weeks ago</span>
+            <span class="heatmap__label">This week</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 4: Student Table -->
+      <div class="section">
+        <div class="card animate-in">
+          <div class="corner-accent corner-accent--tl"></div>
+          <div class="corner-accent corner-accent--br"></div>
+          <div class="card__header">
+            <span class="card__title">Student Directory</span>
+            <span class="card__icon">▤</span>
+          </div>
+
+          <!-- Filters -->
+          <div class="filter-bar">
+            <input class="filter-input" type="text" id="searchInput" placeholder="Search by name or USN...">
+            <select class="filter-select" id="deptFilter">
+              <option value="">All Departments</option>
+              <option value="CSE">CSE</option>
+              <option value="ISE">ISE</option>
+              <option value="ECE">ECE</option>
+            </select>
+            <select class="filter-select" id="statusFilter">
+              <option value="">All Status</option>
+              <option value="active">Active</option>
+              <option value="idle">Idle</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+
+          <!-- Table -->
+          <div class="table-wrap">
+            <table class="student-table">
+              <thead>
+                <tr>
+                  <th>USN</th>
+                  <th>Name</th>
+                  <th>Dept</th>
+                  <th>Status</th>
+                  <th>Attendance</th>
+                  <th>Experiments</th>
+                  <th>Active Time</th>
+                </tr>
+              </thead>
+              <tbody id="studentTableBody">
+                <!-- Dynamically rendered -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════
+           STUDENT MANAGEMENT (CRUD) SECTION
+           ═══════════════════════════════════════════ -->
+      <div data-section="student-mgmt" style="display:none;">
+
+        <div class="main__header animate-in">
+          <div>
+            <h2 class="main__greeting">Student Management</h2>
+            <p class="main__sub">// CRUD OPERATIONS — CREATE / READ / UPDATE / DELETE</p>
+          </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="grid grid--4 section">
+          <div class="card stat animate-in">
+            <div class="stat__value" id="crudTotalCount">0</div>
+            <div class="stat__label">Total Students</div>
+          </div>
+          <div class="card stat animate-in">
+            <div class="stat__value stat__value--lime" id="crudCseCount">0</div>
+            <div class="stat__label">CSE</div>
+          </div>
+          <div class="card stat animate-in">
+            <div class="stat__value stat__value--lime" id="crudIseCount">0</div>
+            <div class="stat__label">ISE</div>
+          </div>
+          <div class="card stat animate-in">
+            <div class="stat__value stat__value--lime" id="crudEceCount">0</div>
+            <div class="stat__label">ECE</div>
+          </div>
+        </div>
+
+        <!-- Add/Edit Student Form -->
+        <div class="section">
+          <div class="card animate-in">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title" id="crudFormTitle">// ADD NEW STUDENT</span>
+              <span class="card__icon">✎</span>
+              <button class="crud-toggle-btn" id="crudFormToggle" title="Toggle form">−</button>
+            </div>
+            <div id="crudFormContainer">
+              <form id="studentCrudForm" autocomplete="off">
+                <div class="crud-form-grid">
+                  <div class="crud-field">
+                    <label class="crud-field__label">USN</label>
+                    <input type="text" class="crud-input" id="crudUsn" placeholder="e.g., 1RV20CS001" required minlength="6">
+                  </div>
+                  <div class="crud-field">
+                    <label class="crud-field__label">Full Name</label>
+                    <input type="text" class="crud-input" id="crudName" placeholder="e.g., Aarav Mehta" required minlength="2">
+                  </div>
+                  <div class="crud-field">
+                    <label class="crud-field__label">Department</label>
+                    <select class="crud-input" id="crudDept" required>
+                      <option value="">Select Department</option>
+                      <option value="CSE">CSE</option>
+                      <option value="ISE">ISE</option>
+                      <option value="ECE">ECE</option>
+                    </select>
+                  </div>
+                  <div class="crud-field">
+                    <label class="crud-field__label">Semester</label>
+                    <select class="crud-input" id="crudSemester">
+                      <option value="1">Semester 1</option>
+                      <option value="2">Semester 2</option>
+                      <option value="3">Semester 3</option>
+                      <option value="4">Semester 4</option>
+                      <option value="5">Semester 5</option>
+                      <option value="6">Semester 6</option>
+                      <option value="7">Semester 7</option>
+                      <option value="8">Semester 8</option>
+                    </select>
+                  </div>
+                  <div class="crud-field">
+                    <label class="crud-field__label">Email</label>
+                    <input type="email" class="crud-input" id="crudEmail" placeholder="student@gmail.com" required>
+                  </div>
+                  <div class="crud-field">
+                    <label class="crud-field__label">Mobile</label>
+                    <input type="tel" class="crud-input" id="crudMobile" placeholder="10-digit number" required pattern="[6-9]\d{9}" maxlength="10">
+                  </div>
+                </div>
+                <div class="crud-form-actions">
+                  <button type="submit" class="btn btn--primary" id="crudSubmitBtn">ADD RECORD</button>
+                  <button type="button" class="btn btn--secondary" id="crudCancelBtn" style="display:none;">CANCEL EDIT</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Student Table -->
+        <div class="section">
+          <div class="card animate-in">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Student Directory</span>
+              <span class="card__icon">▤</span>
+              <span class="crud-count" id="crudTableCount">0 / 0</span>
+            </div>
+
+            <!-- Filters -->
+            <div class="filter-bar">
+              <input class="filter-input" type="text" id="crudSearchInput" placeholder="Search by name, USN, or email...">
+              <select class="filter-select" id="crudDeptFilter">
+                <option value="">All Departments</option>
+                <option value="CSE">CSE</option>
+                <option value="ISE">ISE</option>
+                <option value="ECE">ECE</option>
+              </select>
+            </div>
+
+            <!-- Table -->
+            <div class="table-wrap">
+              <table class="student-table">
+                <thead>
+                  <tr>
+                    <th>USN</th>
+                    <th>Name</th>
+                    <th>Dept</th>
+                    <th>Email</th>
+                    <th>Mobile</th>
+                    <th>Sem</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="crudTableBody">
+                  <!-- Dynamically rendered -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end data-section="student-mgmt" -->
+
+      <!-- Delete Confirmation Modal -->
+      <div class="crud-modal" id="deleteModal">
+        <div class="crud-modal__box">
+          <div class="crud-modal__header">
+            <span class="crud-modal__icon">⚠</span>
+            <h3 class="crud-modal__title">Confirm Deletion</h3>
+          </div>
+          <p class="crud-modal__text">Are you sure you want to delete this student record?</p>
+          <div class="crud-modal__info">
+            <div class="crud-modal__row">
+              <span class="crud-modal__label">Name:</span>
+              <span class="crud-modal__value" id="deleteStudentName">—</span>
+            </div>
+            <div class="crud-modal__row">
+              <span class="crud-modal__label">USN:</span>
+              <span class="crud-modal__value" id="deleteStudentUsn">—</span>
+            </div>
+          </div>
+          <p class="crud-modal__warning">This action cannot be undone.</p>
+          <div class="crud-modal__actions">
+            <button class="btn btn--danger" id="deleteConfirmBtn">DELETE PERMANENTLY</button>
+            <button class="btn btn--secondary" id="deleteCancelBtn">CANCEL</button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/validator.js"></script>
+  <script src="js/studentCrud.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      // Initialize Student CRUD module
+      StudentCrud.init();
+
+      // Sidebar navigation for CRUD section
+      var navLinks = document.querySelectorAll('.sidebar__link[data-section]');
+      var sections = document.querySelectorAll('[data-section]');
+
+      navLinks.forEach(function (link) {
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          var target = link.getAttribute('data-section');
+
+          // Update active link
+          navLinks.forEach(function (l) { l.classList.remove('active'); });
+          link.classList.add('active');
+
+          // Show target section, hide others
+          sections.forEach(function (sec) {
+            var secName = sec.getAttribute('data-section');
+            if (secName === target) {
+              sec.style.display = '';
+            } else if (secName && secName !== 'student-mgmt') {
+              // Don't hide non-dashboard sections managed by admin.js
+              if (secName === 'dashboard') sec.style.display = 'none';
+            }
+          });
+
+          // Show/hide CRUD section
+          var crudSection = document.querySelector('[data-section="student-mgmt"]');
+          var dashSection = document.querySelector('[data-section="dashboard"]');
+          if (crudSection) crudSection.style.display = target === 'student-mgmt' ? '' : 'none';
+          if (dashSection) dashSection.style.display = target === 'dashboard' ? '' : 'none';
+
+          // Refresh CRUD data when switching to it
+          if (target === 'student-mgmt') {
+            StudentCrud.refresh();
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

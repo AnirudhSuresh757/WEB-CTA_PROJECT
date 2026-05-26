@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>STUDENT // LOGIN</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+  <!-- Animated Background -->
+  <div class="bg-canvas" aria-hidden="true">
+    <div class="bg-grid"></div>
+    <div class="bg-pulse bg-pulse--lime"></div>
+    <div class="bg-pulse bg-pulse--orange"></div>
+    <div class="bg-pulse bg-pulse--cyan"></div>
+    <div class="bg-data-stream"></div>
+    <div class="bg-data-stream"></div>
+    <div class="bg-data-stream"></div>
+    <div class="bg-data-stream"></div>
+    <div class="bg-data-stream"></div>
+    <div class="bg-particles">
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+    </div>
+    <div class="bg-scanline"></div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- App -->
+  <main class="app">
+    <div class="login">
+      <div class="login__frame">
+
+        <!-- Corner Accents -->
+        <div class="corner-accent corner-accent--tl"></div>
+        <div class="corner-accent corner-accent--tr"></div>
+        <div class="corner-accent corner-accent--bl"></div>
+        <div class="corner-accent corner-accent--br"></div>
+
+        <!-- Header -->
+        <header class="login__header">
+          <div class="login__logo">
+            <div class="login__logo-icon">🎓</div>
+            <span class="login__logo-text">STUDENT_AUTH v3.2</span>
+          </div>
+          <h1 class="login__title">Student Login</h1>
+          <p class="login__subtitle">Enter your USN and password</p>
+        </header>
+
+        <!-- Login Form -->
+        <form class="form" id="loginForm" novalidate>
+
+          <!-- Error Message -->
+          <div class="error-msg" id="errorMsg" role="alert">
+            <span class="error-msg__icon">!</span>
+            <span id="errorText">Invalid credentials. Try again.</span>
+          </div>
+
+          <!-- USN Field -->
+          <div class="field">
+            <label class="field__label" for="usn">University Seat Number</label>
+            <div class="field__input-wrap">
+              <input
+                class="field__input"
+                type="text"
+                id="usn"
+                name="usn"
+                placeholder="Enter your USN"
+                autocomplete="username"
+                spellcheck="false"
+                required
+              >
+              <span class="field__icon">#</span>
+              <div class="field__bar"></div>
+            </div>
+          </div>
+
+          <!-- Password Field -->
+          <div class="field">
+            <label class="field__label" for="password">Password</label>
+            <div class="field__input-wrap">
+              <input
+                class="field__input"
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+                required
+              >
+              <span class="field__icon">*</span>
+              <div class="field__bar"></div>
+            </div>
+          </div>
+
+          <!-- Lab Selection -->
+          <div class="field">
+            <label class="field__label" for="labSelect">Lab Session</label>
+            <div class="field__input-wrap">
+              <select class="field__input" id="labSelect" name="labSelect" required>
+                <option value="">— Select Lab —</option>
+                <option value="Web Technology Lab">Web Technology Lab</option>
+                <option value="DBMS Lab">DBMS Lab</option>
+                <option value="OS Lab">OS Lab</option>
+                <option value="CN Lab">CN Lab</option>
+                <option value="Java Lab">Java Lab</option>
+              </select>
+              <span class="field__icon">▸</span>
+              <div class="field__bar"></div>
+            </div>
+          </div>
+
+          <!-- Submit -->
+          <button class="btn-login" type="submit" id="btnLogin">
+            Login
+          </button>
+        </form>
+
+        <!-- Registration Link -->
+        <div style="text-align: center; margin-top: 16px;">
+          <a href="student-register.html" style="font-family: var(--font-mono); font-size: 11px; color: var(--glow-lime); text-decoration: none; letter-spacing: 1px; opacity: 0.8; transition: opacity 0.2s;">
+            New student? Register here →
+          </a>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+          <span><span class="status-bar__dot"></span>SYSTEM ONLINE</span>
+          <span id="clockDisplay">--:--:--</span>
+        </div>
+
+        <!-- Footer -->
+        <footer class="login__footer">
+          <a href="index.html" style="color: var(--text-muted); text-decoration: none;">← Back to Portal Selection</a>
+        </footer>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/auth.js"></script>
+  <script src="js/validator.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      // Auto-redirect if already logged in as student
+      if (Auth.isStudentLoggedIn()) {
+        window.location.href = 'dashboard.html';
+        return;
+      }
+
+      var form = document.getElementById('loginForm');
+      var usnInput = document.getElementById('usn');
+      var passwordInput = document.getElementById('password');
+      var labSelect = document.getElementById('labSelect');
+      var btnLogin = document.getElementById('btnLogin');
+      var errorMsg = document.getElementById('errorMsg');
+      var errorText = document.getElementById('errorText');
+      var clockDisplay = document.getElementById('clockDisplay');
+
+      // Field containers
+      var usnField = usnInput.closest('.field');
+      var passwordField = passwordInput.closest('.field');
+      var labField = labSelect.closest('.field');
+
+      // ── Attach Real-Time Validation ──
+      Validator.attachField(usnField, usnInput, function (val) {
+        return Validator.validateRequired(val, 'USN');
+      });
+      Validator.attachField(passwordField, passwordInput, function (val) {
+        return Validator.validateRequired(val, 'Password');
+      });
+      Validator.attachField(labField, labSelect, function (val) {
+        return val ? { valid: true } : { valid: false, message: 'Please select a lab.' };
+      });
+
+      var formFields = [
+        { fieldEl: usnField, inputEl: usnInput, validateFn: function (val) {
+          return Validator.validateRequired(val, 'USN');
+        }},
+        { fieldEl: passwordField, inputEl: passwordInput, validateFn: function (val) {
+          return Validator.validateRequired(val, 'Password');
+        }},
+        { fieldEl: labField, inputEl: labSelect, validateFn: function (val) {
+          return val ? { valid: true } : { valid: false, message: 'Please select a lab.' };
+        }}
+      ];
+
+      // Error handling
+      function showError(message) {
+        errorText.textContent = message;
+        errorMsg.classList.add('visible');
+        errorMsg.style.animation = 'none';
+        errorMsg.offsetHeight;
+        errorMsg.style.animation = '';
+      }
+
+      function hideError() {
+        errorMsg.classList.remove('visible');
+      }
+
+      // Loading state
+      function setLoading(on) {
+        btnLogin.classList.toggle('loading', on);
+        btnLogin.disabled = on;
+        usnInput.disabled = on;
+        passwordInput.disabled = on;
+      }
+
+      // Form submission
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        hideError();
+
+        // Validate fields with inline errors
+        var allValid = Validator.validateAll(formFields);
+        if (!allValid) return;
+
+        var usn = usnInput.value.trim();
+        var password = passwordInput.value;
+        var labName = labSelect.value;
+
+        if (!labName) {
+          showError('Please select a lab session.');
+          return;
+        }
+
+        // Additional credential validation
+        var validation = Auth.validateStudentCredentials(usn, password);
+        if (!validation.valid) {
+          showError(validation.errors[0]);
+          return;
+        }
+
+        setLoading(true);
+
+        // Authenticate student
+        setTimeout(function () {
+          var result = Auth.loginStudent(usn, password);
+
+          if (!result.success) {
+            setLoading(false);
+            showError(result.message);
+            passwordInput.value = '';
+            Validator.resetField(passwordField);
+            passwordInput.focus();
+            return;
+          }
+
+          // Success — create student session and redirect to dashboard
+          Auth.createStudentSession(result.user, labName);
+
+          btnLogin.textContent = 'ACCESS GRANTED';
+          btnLogin.classList.remove('loading');
+          btnLogin.style.background = '#7fff00';
+          btnLogin.style.boxShadow = '0 0 40px rgba(127, 255, 0, 0.5)';
+
+          setTimeout(function () {
+            window.location.href = 'dashboard.html';
+          }, 600);
+
+        }, 1000);
+      });
+
+      // Clock
+      function tick() {
+        var now = new Date();
+        var h = String(now.getHours()).padStart(2, '0');
+        var m = String(now.getMinutes()).padStart(2, '0');
+        var s = String(now.getSeconds()).padStart(2, '0');
+        clockDisplay.textContent = h + ':' + m + ':' + s;
+      }
+      tick();
+      setInterval(tick, 1000);
+
+      // Password visibility toggle
+      var passIcon = document.querySelector('#password + .field__icon');
+      if (passIcon) {
+        passIcon.style.cursor = 'pointer';
+        passIcon.style.pointerEvents = 'auto';
+        passIcon.style.userSelect = 'none';
+
+        var visible = false;
+        passIcon.addEventListener('click', function () {
+          visible = !visible;
+          passwordInput.type = visible ? 'text' : 'password';
+          passIcon.textContent = visible ? 'X' : '*';
+          passIcon.style.color = visible ? 'var(--glow-lime)' : '';
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

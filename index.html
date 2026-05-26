@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SYSTEM // ACCESS PORTAL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+  <!-- Animated Background -->
+  <div class="bg-canvas" aria-hidden="true">
+    <div class="bg-grid"></div>
+    <div class="bg-pulse bg-pulse--lime"></div>
+    <div class="bg-pulse bg-pulse--orange"></div>
+    <div class="bg-pulse bg-pulse--cyan"></div>
+    <div class="bg-data-stream"></div>
+    <div class="bg-data-stream"></div>
+    <div class="bg-data-stream"></div>
+    <div class="bg-data-stream"></div>
+    <div class="bg-data-stream"></div>
+    <div class="bg-particles">
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+      <div class="bg-particle"></div>
+    </div>
+    <div class="bg-scanline"></div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- App -->
+  <main class="app">
+    <div class="login">
+      <div class="login__frame">
+
+        <!-- Corner Accents -->
+        <div class="corner-accent corner-accent--tl"></div>
+        <div class="corner-accent corner-accent--tr"></div>
+        <div class="corner-accent corner-accent--bl"></div>
+        <div class="corner-accent corner-accent--br"></div>
+
+        <!-- Header -->
+        <header class="login__header">
+          <div class="login__logo">
+            <div class="login__logo-icon">&gt;_</div>
+            <span class="login__logo-text">SYS_AUTH v3.2</span>
+          </div>
+          <h1 class="login__title">Access Terminal</h1>
+          <p class="login__subtitle">Authentication Required</p>
+        </header>
+
+        <!-- Portal Selection -->
+        <div class="form" id="portalSelect">
+
+          <!-- Student Portal Section -->
+          <div style="margin-bottom: 24px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+              <div style="width: 8px; height: 8px; background: var(--glow-lime); border-radius: 50%; box-shadow: 0 0 8px rgba(127, 255, 0, 0.4);"></div>
+              <span style="font-family: var(--font-mono); font-size: 11px; color: var(--glow-lime); letter-spacing: 2px; text-transform: uppercase;">
+                Student Portal
+              </span>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+              <!-- Student Register -->
+              <a href="student-register.html" class="btn-login" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; font-size: 11px; padding: 12px 10px; background: transparent; border: 1px solid var(--border-glow); color: var(--glow-lime); box-shadow: none;">
+                <span style="font-size: 14px;">📝</span>
+                Register
+              </a>
+
+              <!-- Student Login -->
+              <a href="student-login.html" class="btn-login" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; font-size: 11px; padding: 12px 10px;">
+                <span style="font-size: 14px;">🎓</span>
+                Login
+              </a>
+            </div>
+          </div>
+
+          <!-- Divider -->
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+            <div style="flex: 1; height: 1px; background: var(--border-dim);"></div>
+            <span style="font-family: var(--font-mono); font-size: 9px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase;">OR</span>
+            <div style="flex: 1; height: 1px; background: var(--border-dim);"></div>
+          </div>
+
+          <!-- Admin Portal Section -->
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+              <div style="width: 8px; height: 8px; background: var(--accent-orange); border-radius: 50%; box-shadow: 0 0 8px rgba(255, 106, 0, 0.4);"></div>
+              <span style="font-family: var(--font-mono); font-size: 11px; color: var(--accent-orange); letter-spacing: 2px; text-transform: uppercase;">
+                Faculty / Admin Portal
+              </span>
+            </div>
+
+            <!-- Admin Login -->
+            <a href="admin-login.html" class="btn-login" style="display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; background: var(--accent-orange); box-shadow: 0 0 20px rgba(255, 106, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.3);">
+              <span style="font-size: 16px;">⚙</span>
+              Admin Login
+            </a>
+          </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+          <span><span class="status-bar__dot"></span>SYSTEM ONLINE</span>
+          <span id="clockDisplay">--:--:--</span>
+        </div>
+
+        <!-- Footer -->
+        <footer class="login__footer">
+          Secure connection <span>//</span> Encrypted channel
+        </footer>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/auth.js"></script>
+  <script>
+    // Auto-redirect if already logged in
+    (function () {
+      if (Auth.isAdminLoggedIn()) {
+        window.location.href = 'admin.html';
+        return;
+      }
+      if (Auth.isStudentLoggedIn()) {
+        window.location.href = 'dashboard.html';
+        return;
+      }
+    })();
+  </script>
+</body>
+</html>
