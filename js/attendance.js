@@ -177,7 +177,8 @@ var Attendance = (function () {
     presentDays = Object.keys(uniqueDates).length;
 
     // Attendance percentage — based on expected sessions (assume 5 days/week, current week)
-    var expectedDays = _getExpectedDays();
+    // When no attendance history exists, everything is 0
+    var expectedDays = totalDays > 0 ? _getExpectedDays() : 0;
     var percentage = expectedDays > 0 ? Math.round((presentDays / expectedDays) * 100) : 0;
     if (percentage > 100) percentage = 100;
 
@@ -345,13 +346,13 @@ var Attendance = (function () {
       remainEl.textContent = status.sessionActive ? status.sessionRemainingFormatted : '--:--:--';
     }
 
-    // Mark button state
-    var markBtn = container.querySelector('#attMarkBtn');
+    // Mark button — NOT inside attStatusCard, so fall back to document-wide query
+    var markBtn = document.getElementById('attMarkBtn');
     if (markBtn) {
       if (status.marked) {
-        markBtn.textContent = 'MARKED';
+        markBtn.textContent = 'ATTENDANCE MARKED';
         markBtn.disabled = true;
-        markBtn.className = 'webcam__btn webcam__btn--primary';
+        markBtn.className = 'webcam__btn webcam__btn--primary att-marked-btn';
       } else if (status.canMark) {
         markBtn.textContent = 'MARK ATTENDANCE';
         markBtn.disabled = false;
@@ -367,7 +368,14 @@ var Attendance = (function () {
     var reasonEl = container.querySelector('#attMarkReason');
     if (reasonEl) {
       if (status.marked) {
-        reasonEl.textContent = 'Attendance recorded for this session';
+        // Show timestamp of when attendance was recorded
+        var todayRecords = getTodayRecords();
+        var lastRecord = todayRecords.length > 0 ? todayRecords[todayRecords.length - 1] : null;
+        if (lastRecord && lastRecord.time) {
+          reasonEl.textContent = 'Marked at ' + lastRecord.time;
+        } else {
+          reasonEl.textContent = 'Attendance recorded for this session';
+        }
       } else if (!status.canMark && status.canMarkReason) {
         reasonEl.textContent = status.canMarkReason;
       } else {

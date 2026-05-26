@@ -66,19 +66,19 @@
           <span class="sidebar__link-icon">◉</span>
           Student CRUD
         </a>
-        <a href="#" class="sidebar__link">
+        <a href="#" class="sidebar__link" data-section="attendance">
           <span class="sidebar__link-icon">◎</span>
           Attendance
         </a>
-        <a href="#" class="sidebar__link">
+        <a href="#" class="sidebar__link" data-section="experiments">
           <span class="sidebar__link-icon">▣</span>
           Experiments
         </a>
-        <a href="#" class="sidebar__link">
+        <a href="#" class="sidebar__link" data-section="reports">
           <span class="sidebar__link-icon">▤</span>
           Reports
         </a>
-        <a href="#" class="sidebar__link">
+        <a href="#" class="sidebar__link" data-section="settings">
           <span class="sidebar__link-icon">⚙</span>
           Settings
         </a>
@@ -109,159 +109,166 @@
     <!-- ═══ Main Content ═══ -->
     <main class="main">
 
-      <!-- Header -->
-      <div class="main__header animate-in">
-        <div>
-          <h2 class="main__greeting">Welcome, <span data-user-name>Admin</span></h2>
-          <p class="main__sub">// FACULTY CONTROL PANEL</p>
-        </div>
-        <div class="main__actions">
-          <button class="btn-export btn-export--csv" id="btnExportCsv">↓ Export CSV</button>
-          <button class="btn-export btn-export--pdf" id="btnExportPdf">↓ Export PDF</button>
-        </div>
-      </div>
+      <!-- ═══════════════════════════════════════════
+           DASHBOARD SECTION (default)
+           ═══════════════════════════════════════════ -->
+      <div data-section="dashboard">
 
-      <!-- Row 1: Stats -->
-      <div class="grid grid--4 section">
-        <div class="card stat animate-in">
-          <div class="stat__value" id="liveCount">0</div>
-          <div class="stat__label">Live Active</div>
-        </div>
-        <div class="card stat animate-in">
-          <div class="stat__value" id="totalStudents">0</div>
-          <div class="stat__label">Total Students</div>
-        </div>
-        <div class="card stat animate-in">
-          <div class="stat__value stat__value--lime" id="avgAttendance">0%</div>
-          <div class="stat__label">Avg Attendance</div>
-        </div>
-        <div class="card stat animate-in">
-          <div class="stat__value stat__value--red" id="totalViolations">0</div>
-          <div class="stat__label">Violations</div>
-        </div>
-      </div>
-
-      <!-- Row 2: Session Info + Completion -->
-      <div class="grid grid--2-1 section">
-        <!-- Session Info -->
-        <div class="card animate-in">
-          <div class="corner-accent corner-accent--tl"></div>
-          <div class="corner-accent corner-accent--br"></div>
-          <div class="card__header">
-            <span class="card__title">Session Analytics</span>
-            <span class="card__icon">◉</span>
-            <span class="live-indicator"><span class="live-indicator__dot"></span>LIVE</span>
+        <!-- Header -->
+        <div class="main__header animate-in">
+          <div>
+            <h2 class="main__greeting">Welcome, <span data-user-name>Admin</span></h2>
+            <p class="main__sub">// FACULTY CONTROL PANEL</p>
           </div>
-          <div id="sessionInfo">
-            <!-- Dynamically rendered -->
+          <div class="main__actions">
+            <button class="btn-export btn-export--csv" id="btnExportCsv">↓ Export CSV</button>
+            <button class="btn-export btn-export--pdf" id="btnExportPdf">↓ Export PDF</button>
           </div>
         </div>
 
-        <!-- Completion Donut -->
-        <div class="card animate-in">
-          <div class="corner-accent corner-accent--tl"></div>
-          <div class="corner-accent corner-accent--br"></div>
-          <div class="card__header">
-            <span class="card__title">Completion Rate</span>
-            <span class="card__icon">◎</span>
+        <!-- Row 1: Stats -->
+        <div class="grid grid--4 section">
+          <div class="card stat animate-in">
+            <div class="stat__value" id="liveCount">0</div>
+            <div class="stat__label">Live Active</div>
           </div>
-          <div class="donut-wrap">
-            <div class="donut">
-              <svg class="donut__svg" viewBox="0 0 36 36">
-                <circle class="donut__track" cx="18" cy="18" r="15.915"></circle>
-                <circle class="donut__fill donut__fill--lime" cx="18" cy="18" r="15.915"
-                  stroke-dasharray="100"
-                  stroke-dashoffset="20"
-                  id="completionDonut"></circle>
-              </svg>
-              <div class="donut__center">
-                <span class="donut__pct" id="avgCompletion">80%</span>
-                <span class="donut__pct-label">Average</span>
-              </div>
+          <div class="card stat animate-in">
+            <div class="stat__value" id="totalStudents">0</div>
+            <div class="stat__label">Total Students</div>
+          </div>
+          <div class="card stat animate-in">
+            <div class="stat__value stat__value--lime" id="avgAttendance">0%</div>
+            <div class="stat__label">Avg Attendance</div>
+          </div>
+          <div class="card stat animate-in">
+            <div class="stat__value stat__value--red" id="totalViolations">0</div>
+            <div class="stat__label">Violations</div>
+          </div>
+        </div>
+
+        <!-- Row 2: Session Info + Completion -->
+        <div class="grid grid--2-1 section">
+          <!-- Session Info -->
+          <div class="card animate-in">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Session Analytics</span>
+              <span class="card__icon">◉</span>
+              <span class="live-indicator"><span class="live-indicator__dot"></span>LIVE</span>
             </div>
-            <div class="donut__legend">
-              <div class="donut__legend-item">
-                <span class="donut__legend-dot" style="background: var(--glow-lime)"></span>
-                Completed: 40/50 exps
-              </div>
-              <div class="donut__legend-item">
-                <span class="donut__legend-dot" style="background: var(--accent-orange)"></span>
-                Pending: 10 exps
-              </div>
+            <div id="sessionInfo">
+              <!-- Dynamically rendered -->
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Row 3: Attendance Heatmap -->
-      <div class="section">
-        <div class="card animate-in">
-          <div class="corner-accent corner-accent--tl"></div>
-          <div class="corner-accent corner-accent--br"></div>
-          <div class="card__header">
-            <span class="card__title">Attendance Heatmap (Last 4 Weeks)</span>
-            <span class="card__icon">▦</span>
-          </div>
-          <div class="heatmap" id="heatmapGrid">
-            <!-- Dynamically rendered -->
-          </div>
-          <div class="heatmap__labels">
-            <span class="heatmap__label">4 weeks ago</span>
-            <span class="heatmap__label">3 weeks ago</span>
-            <span class="heatmap__label">2 weeks ago</span>
-            <span class="heatmap__label">This week</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Row 4: Student Table -->
-      <div class="section">
-        <div class="card animate-in">
-          <div class="corner-accent corner-accent--tl"></div>
-          <div class="corner-accent corner-accent--br"></div>
-          <div class="card__header">
-            <span class="card__title">Student Directory</span>
-            <span class="card__icon">▤</span>
-          </div>
-
-          <!-- Filters -->
-          <div class="filter-bar">
-            <input class="filter-input" type="text" id="searchInput" placeholder="Search by name or USN...">
-            <select class="filter-select" id="deptFilter">
-              <option value="">All Departments</option>
-              <option value="CSE">CSE</option>
-              <option value="ISE">ISE</option>
-              <option value="ECE">ECE</option>
-            </select>
-            <select class="filter-select" id="statusFilter">
-              <option value="">All Status</option>
-              <option value="active">Active</option>
-              <option value="idle">Idle</option>
-              <option value="inactive">Inactive</option>
-            </select>
-          </div>
-
-          <!-- Table -->
-          <div class="table-wrap">
-            <table class="student-table">
-              <thead>
-                <tr>
-                  <th>USN</th>
-                  <th>Name</th>
-                  <th>Dept</th>
-                  <th>Status</th>
-                  <th>Attendance</th>
-                  <th>Experiments</th>
-                  <th>Active Time</th>
-                </tr>
-              </thead>
-              <tbody id="studentTableBody">
-                <!-- Dynamically rendered -->
-              </tbody>
-            </table>
+          <!-- Completion Donut -->
+          <div class="card animate-in">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Completion Rate</span>
+              <span class="card__icon">◎</span>
+            </div>
+            <div class="donut-wrap">
+              <div class="donut">
+                <svg class="donut__svg" viewBox="0 0 36 36">
+                  <circle class="donut__track" cx="18" cy="18" r="15.915"></circle>
+                  <circle class="donut__fill donut__fill--lime" cx="18" cy="18" r="15.915"
+                    stroke-dasharray="100"
+                    stroke-dashoffset="20"
+                    id="completionDonut"></circle>
+                </svg>
+                <div class="donut__center">
+                  <span class="donut__pct" id="avgCompletion">0%</span>
+                  <span class="donut__pct-label">Average</span>
+                </div>
+              </div>
+              <div class="donut__legend">
+                <div class="donut__legend-item">
+                  <span class="donut__legend-dot" style="background: var(--glow-lime)"></span>
+                  <span id="donutCompleted">Completed: 0 exps</span>
+                </div>
+                <div class="donut__legend-item">
+                  <span class="donut__legend-dot" style="background: var(--accent-orange)"></span>
+                  <span id="donutPending">Pending: 0 exps</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+
+        <!-- Row 3: Attendance Heatmap -->
+        <div class="section">
+          <div class="card animate-in">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Attendance Heatmap (Last 4 Weeks)</span>
+              <span class="card__icon">▦</span>
+            </div>
+            <div class="heatmap" id="heatmapGrid">
+              <!-- Dynamically rendered -->
+            </div>
+            <div class="heatmap__labels">
+              <span class="heatmap__label">4 weeks ago</span>
+              <span class="heatmap__label">3 weeks ago</span>
+              <span class="heatmap__label">2 weeks ago</span>
+              <span class="heatmap__label">This week</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 4: Student Table -->
+        <div class="section">
+          <div class="card animate-in">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Student Directory</span>
+              <span class="card__icon">▤</span>
+            </div>
+
+            <!-- Filters -->
+            <div class="filter-bar">
+              <input class="filter-input" type="text" id="searchInput" placeholder="Search by name or USN...">
+              <select class="filter-select" id="deptFilter">
+                <option value="">All Departments</option>
+                <option value="CSE">CSE</option>
+                <option value="ISE">ISE</option>
+                <option value="ECE">ECE</option>
+              </select>
+              <select class="filter-select" id="statusFilter">
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="idle">Idle</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+
+            <!-- Table -->
+            <div class="table-wrap">
+              <table class="student-table">
+                <thead>
+                  <tr>
+                    <th>USN</th>
+                    <th>Name</th>
+                    <th>Dept</th>
+                    <th>Status</th>
+                    <th>Attendance</th>
+                    <th>Experiments</th>
+                    <th>Active Time</th>
+                  </tr>
+                </thead>
+                <tbody id="studentTableBody">
+                  <!-- Dynamically rendered -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end data-section="dashboard" -->
 
       <!-- ═══════════════════════════════════════════
            STUDENT MANAGEMENT (CRUD) SECTION
@@ -428,9 +435,246 @@
         </div>
       </div>
 
+      <!-- ═══════════════════════════════════════════
+           ATTENDANCE SECTION
+           ═══════════════════════════════════════════ -->
+      <div data-section="attendance" style="display:none;">
+
+        <div class="main__header animate-in">
+          <div>
+            <h2 class="main__greeting">Attendance Records</h2>
+            <p class="main__sub">// ATTENDANCE TRACKING &amp; MONITORING</p>
+          </div>
+        </div>
+
+        <!-- Attendance Stats -->
+        <div class="grid grid--4 section">
+          <div class="card stat animate-in">
+            <div class="stat__value" id="attTotalRecords">0</div>
+            <div class="stat__label">Total Records</div>
+          </div>
+          <div class="card stat animate-in">
+            <div class="stat__value stat__value--lime" id="attUniqueDays">0</div>
+            <div class="stat__label">Unique Days</div>
+          </div>
+          <div class="card stat animate-in">
+            <div class="stat__value stat__value--orange" id="attLateCount">0</div>
+            <div class="stat__label">Late Markings</div>
+          </div>
+          <div class="card stat animate-in">
+            <div class="stat__value stat__value--red" id="attAvgPercentage">0%</div>
+            <div class="stat__label">Avg Attendance</div>
+          </div>
+        </div>
+
+        <!-- Attendance Records Table -->
+        <div class="section">
+          <div class="card animate-in">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Attendance Log</span>
+              <span class="card__icon">◎</span>
+            </div>
+
+            <div class="filter-bar">
+              <input class="filter-input" type="text" id="attSearchInput" placeholder="Search by USN or name...">
+              <select class="filter-select" id="attLabFilter">
+                <option value="">All Labs</option>
+              </select>
+            </div>
+
+            <div class="table-wrap">
+              <table class="student-table">
+                <thead>
+                  <tr>
+                    <th>USN</th>
+                    <th>Name</th>
+                    <th>Lab</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="attTableBody">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ═══════════════════════════════════════════
+           EXPERIMENTS SECTION
+           ═══════════════════════════════════════════ -->
+      <div data-section="experiments" style="display:none;">
+
+        <div class="main__header animate-in">
+          <div>
+            <h2 class="main__greeting">Experiments &amp; Assignments</h2>
+            <p class="main__sub">// COMPLETION TRACKING &amp; VERIFICATION</p>
+          </div>
+        </div>
+
+        <!-- Experiment Stats -->
+        <div class="grid grid--4 section">
+          <div class="card stat animate-in">
+            <div class="stat__value" id="expTotalExps">0</div>
+            <div class="stat__label">Total Experiments</div>
+          </div>
+          <div class="card stat animate-in">
+            <div class="stat__value stat__value--lime" id="expCompletedExps">0</div>
+            <div class="stat__label">Completed</div>
+          </div>
+          <div class="card stat animate-in">
+            <div class="stat__value stat__value--orange" id="expPendingExps">0</div>
+            <div class="stat__label">Pending</div>
+          </div>
+          <div class="card stat animate-in">
+            <div class="stat__value stat__value--cyan" id="expCompletionRate">0%</div>
+            <div class="stat__label">Completion Rate</div>
+          </div>
+        </div>
+
+        <!-- Experiments Table -->
+        <div class="section">
+          <div class="card animate-in">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Experiment Status</span>
+              <span class="card__icon">▣</span>
+            </div>
+            <div class="table-wrap">
+              <table class="student-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Experiment</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Completed At</th>
+                    <th>Verified</th>
+                  </tr>
+                </thead>
+                <tbody id="expTableBody">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ═══════════════════════════════════════════
+           REPORTS SECTION
+           ═══════════════════════════════════════════ -->
+      <div data-section="reports" style="display:none;">
+
+        <div class="main__header animate-in">
+          <div>
+            <h2 class="main__greeting">Reports &amp; Analytics</h2>
+            <p class="main__sub">// SUMMARY &amp; EXPORT</p>
+          </div>
+          <div class="main__actions">
+            <button class="btn-export btn-export--csv" id="btnReportCsv">↓ Export All CSV</button>
+          </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="grid grid--2 section">
+          <div class="card animate-in">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Attendance Summary</span>
+              <span class="card__icon">◎</span>
+            </div>
+            <div id="reportAttendanceSummary">
+            </div>
+          </div>
+          <div class="card animate-in">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Session Summary</span>
+              <span class="card__icon">◉</span>
+            </div>
+            <div id="reportSessionSummary">
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid--2 section">
+          <div class="card animate-in">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Student Statistics</span>
+              <span class="card__icon">▤</span>
+            </div>
+            <div id="reportStudentStats">
+            </div>
+          </div>
+          <div class="card animate-in">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Security Summary</span>
+              <span class="card__icon">⚠</span>
+            </div>
+            <div id="reportSecuritySummary">
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ═══════════════════════════════════════════
+           SETTINGS SECTION
+           ═══════════════════════════════════════════ -->
+      <div data-section="settings" style="display:none;">
+
+        <div class="main__header animate-in">
+          <div>
+            <h2 class="main__greeting">System Settings</h2>
+            <p class="main__sub">// ADMIN CONFIGURATION</p>
+          </div>
+        </div>
+
+        <div class="grid grid--2 section">
+          <!-- Admin Profile -->
+          <div class="card animate-in">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">Admin Profile</span>
+              <span class="card__icon">◉</span>
+            </div>
+            <div id="settingsProfile">
+            </div>
+          </div>
+
+          <!-- System Controls -->
+          <div class="card animate-in">
+            <div class="corner-accent corner-accent--tl"></div>
+            <div class="corner-accent corner-accent--br"></div>
+            <div class="card__header">
+              <span class="card__title">System Controls</span>
+              <span class="card__icon">⚙</span>
+            </div>
+            <div id="settingsControls">
+            </div>
+          </div>
+        </div>
+
+      </div>
+
     </main>
   </div>
 
+  <script src="js/dataReset.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/admin.js"></script>
   <script src="js/validator.js"></script>
@@ -442,40 +686,57 @@
       // Initialize Student CRUD module
       StudentCrud.init();
 
-      // Sidebar navigation for CRUD section
+      // ── Sidebar Navigation ──
       var navLinks = document.querySelectorAll('.sidebar__link[data-section]');
-      var sections = document.querySelectorAll('[data-section]');
+      var contentSections = document.querySelectorAll('main [data-section]');
+      var _currentSection = 'dashboard';
+
+      function _switchSection(target) {
+        if (target === _currentSection) return;
+        _currentSection = target;
+
+        // Update active link
+        navLinks.forEach(function (l) { l.classList.remove('active'); });
+        navLinks.forEach(function (l) {
+          if (l.getAttribute('data-section') === target) l.classList.add('active');
+        });
+
+        // Hide current, show target — use main [data-section] to avoid touching sidebar links
+        contentSections.forEach(function (sec) {
+          var secName = sec.getAttribute('data-section');
+          if (secName === target) {
+            sec.style.display = '';
+            sec.style.opacity = '0';
+            sec.style.transform = 'translateY(8px)';
+            requestAnimationFrame(function () {
+              sec.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+              sec.style.opacity = '1';
+              sec.style.transform = 'translateY(0)';
+            });
+          } else {
+            sec.style.display = 'none';
+          }
+        });
+
+        // Refresh section-specific data
+        if (target === 'student-mgmt') {
+          StudentCrud.refresh();
+        }
+        if (typeof Admin !== 'undefined' && Admin.renderSection) {
+          Admin.renderSection(target);
+        }
+
+        // Close mobile sidebar
+        var sidebar = document.getElementById('sidebar');
+        var overlay = document.getElementById('sidebarOverlay');
+        if (sidebar) sidebar.classList.remove('open');
+        if (overlay) overlay.classList.remove('active');
+      }
 
       navLinks.forEach(function (link) {
         link.addEventListener('click', function (e) {
           e.preventDefault();
-          var target = link.getAttribute('data-section');
-
-          // Update active link
-          navLinks.forEach(function (l) { l.classList.remove('active'); });
-          link.classList.add('active');
-
-          // Show target section, hide others
-          sections.forEach(function (sec) {
-            var secName = sec.getAttribute('data-section');
-            if (secName === target) {
-              sec.style.display = '';
-            } else if (secName && secName !== 'student-mgmt') {
-              // Don't hide non-dashboard sections managed by admin.js
-              if (secName === 'dashboard') sec.style.display = 'none';
-            }
-          });
-
-          // Show/hide CRUD section
-          var crudSection = document.querySelector('[data-section="student-mgmt"]');
-          var dashSection = document.querySelector('[data-section="dashboard"]');
-          if (crudSection) crudSection.style.display = target === 'student-mgmt' ? '' : 'none';
-          if (dashSection) dashSection.style.display = target === 'dashboard' ? '' : 'none';
-
-          // Refresh CRUD data when switching to it
-          if (target === 'student-mgmt') {
-            StudentCrud.refresh();
-          }
+          _switchSection(link.getAttribute('data-section'));
         });
       });
     })();

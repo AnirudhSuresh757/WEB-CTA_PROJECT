@@ -44,6 +44,12 @@
   <!-- Security Toast Notifications -->
   <div class="security-toasts" id="securityToasts"></div>
 
+  <!-- Session Identity Alert Banner -->
+  <div class="session-identity-alert" id="sessionIdentityAlert">
+    <span class="session-identity-alert__icon">⚠</span>
+    <span id="sessionIdentityAlertText">Face mismatch detected — attendance tracking paused</span>
+  </div>
+
   <!-- Dashboard Layout -->
   <div class="dash">
 
@@ -102,6 +108,10 @@
         <h1 class="navbar__title">Student Dashboard</h1>
       </div>
       <div class="navbar__right">
+        <div class="face-verify-badge" id="faceVerifyBadge" style="display: none;">
+          <span class="face-verify-badge__dot"></span>
+          <span id="faceVerifyBadgeText">VERIFYING</span>
+        </div>
         <div class="navbar__datetime">
           <div id="navDate">---</div>
           <div id="navClock">--:--:--</div>
@@ -1015,7 +1025,9 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+  <script src="js/dataReset.js"></script>
   <script src="js/auth.js"></script>
+  <script src="js/faceVerifier.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/webcam.js"></script>
   <script src="js/faceDetection.js"></script>
@@ -1031,6 +1043,9 @@
   <script>
     (function () {
       'use strict';
+
+      // Ensure database is initialized (safety after data reset)
+      Auth.initDatabase();
 
       // Guard: redirect if not logged in as student
       var session = UI.guardDashboard();
@@ -1121,6 +1136,20 @@
       var attMarkBtn = document.getElementById('attMarkBtn');
       if (attMarkBtn) {
         attMarkBtn.addEventListener('click', function () {
+          // Guard: block attendance if face verification detected unauthorized user
+          if (_identityWarnings > 0) {
+            showToast({ type: 'error', title: 'Attendance Blocked', message: 'Cannot mark attendance — face identity mismatch detected. Please re-verify your identity.' });
+            return;
+          }
+          // Guard: require face detection running and face visible
+          if (!FaceDetection.isRunning()) {
+            showToast({ type: 'warning', title: 'Attendance', message: 'Start the webcam first before marking attendance.' });
+            return;
+          }
+          if (FaceDetection.getFaceCount() < 1) {
+            showToast({ type: 'warning', title: 'Attendance', message: 'No face detected. Position yourself in the camera frame first.' });
+            return;
+          }
           var result = Attendance.mark();
           if (result.success) {
             showToast({ type: 'success', title: 'Attendance', message: result.message });
@@ -1139,9 +1168,11 @@
 
       // ── Update attendance on session events ──
       SessionManager.on('attendance', function () {
+        // Always refresh the status card (includes mark button)
+        Attendance.renderStatus(document.getElementById('attStatusCard'));
+
         if (Navigation.getCurrentSection() === 'attendance') {
           var attSec2 = document.querySelector('[data-section="attendance"]');
-          Attendance.renderStatus(document.getElementById('attStatusCard'));
           Attendance.renderStats(attSec2);
           Attendance.renderTodayRecords(document.getElementById('attTodayList'));
           Attendance.renderHistory(document.getElementById('attHistoryList'));
@@ -1295,26 +1326,9 @@
           previewEl.style.display = '';
         }
 
-        // Auto-mark attendance on capture
-        if (!SessionManager.isAttendanceMarked()) {
-          var attResult = Attendance.mark();
-          if (attResult.success) {
-            console.log('[Dashboard] Attendance auto-marked on capture');
-            showToast({ type: 'success', title: 'Attendance Marked', message: 'Attendance recorded for this session.' });
-            // Refresh attendance section if visible
-            if (Navigation.getCurrentSection() === 'attendance') {
-              var attSec = document.querySelector('[data-section="attendance"]');
-              Attendance.renderStatus(document.getElementById('attStatusCard'));
-              Attendance.renderStats(attSec);
-              Attendance.renderTodayRecords(document.getElementById('attTodayList'));
-              Attendance.renderHistory(document.getElementById('attHistoryList'));
-            }
-            // Always refresh dashboard overview
-            _refreshDashAttendance();
-          } else {
-            console.log('[Dashboard] Auto-attendance skipped:', attResult.message);
-          }
-        }
+        // Attendance is NOT auto-marked on capture.
+        // Students must explicitly click the "Mark Attendance" button.
+        // This prevents premature attendance before the student is ready.
       });
 
       if (previewSave) {
@@ -1404,6 +1418,111 @@
           }
         });
       }
+
+      // ── Face Verification Session Monitor ──
+      var faceVerifyBadge = document.getElementById('faceVerifyBadge');
+      var faceVerifyBadgeText = document.getElementById('faceVerifyBadgeText');
+      var sessionIdentityAlert = document.getElementById('sessionIdentityAlert');
+      var sessionIdentityAlertText = document.getElementById('sessionIdentityAlertText');
+      var _sessionFaceMonitoring = false;
+      var _identityWarnings = 0;
+
+      // Initialize FaceVerifier for session monitoring
+      var sessionVerifier = FaceVerifier.init({
+        videoEl: document.getElementById('webcamVideo'),
+        statusEl: null,
+        overlayEl: null
+      });
+
+      function _updateFaceVerifyBadge(state, text) {
+        if (!faceVerifyBadge) return;
+        faceVerifyBadge.style.display = 'inline-flex';
+        faceVerifyBadge.className = 'face-verify-badge';
+        if (state === 'verified') {
+          faceVerifyBadge.classList.add('face-verify-badge--verified');
+        } else if (state === 'scanning') {
+          faceVerifyBadge.classList.add('face-verify-badge--scanning');
+        } else if (state === 'failed') {
+          faceVerifyBadge.classList.add('face-verify-badge--failed');
+        } else if (state === 'unauthorized') {
+          faceVerifyBadge.classList.add('face-verify-badge--unauthorized');
+        }
+        if (faceVerifyBadgeText) faceVerifyBadgeText.textContent = text || state.toUpperCase();
+      }
+
+      function _showSessionIdentityAlert(message) {
+        if (sessionIdentityAlert && sessionIdentityAlertText) {
+          sessionIdentityAlertText.textContent = message;
+          sessionIdentityAlert.classList.add('active');
+        }
+      }
+
+      function _hideSessionIdentityAlert() {
+        if (sessionIdentityAlert) {
+          sessionIdentityAlert.classList.remove('active');
+        }
+      }
+
+      // Start session monitoring when webcam starts AND student has registered face
+      Webcam.on('start', function () {
+        var sess = Auth.getStudentSession();
+        if (!sess || !sess.userId) return;
+
+        var usn = sess.userId.trim().toUpperCase();
+        if (FaceVerifier.hasRegisteredFace(usn)) {
+          _updateFaceVerifyBadge('scanning', 'VERIFYING');
+          FaceVerifier.loadModels().then(function () {
+            FaceVerifier.startSessionMonitoring(usn);
+            _sessionFaceMonitoring = true;
+            _updateFaceVerifyBadge('verified', 'FACE VERIFIED');
+            console.log('[Dashboard] Session face monitoring started for', usn);
+          }).catch(function (err) {
+            console.warn('[Dashboard] Could not start session face monitoring:', err);
+            _updateFaceVerifyBadge('failed', 'MODELS UNAVAILABLE');
+          });
+        }
+      });
+
+      // Stop session monitoring when webcam stops
+      Webcam.on('stop', function () {
+        if (_sessionFaceMonitoring) {
+          FaceVerifier.stopSessionMonitoring();
+          _sessionFaceMonitoring = false;
+          _identityWarnings = 0;
+          _hideSessionIdentityAlert();
+          if (faceVerifyBadge) faceVerifyBadge.style.display = 'none';
+          console.log('[Dashboard] Session face monitoring stopped');
+        }
+      });
+
+      // Handle face mismatch during active session
+      FaceVerifier.on('sessionFaceChanged', function (data) {
+        _identityWarnings++;
+        _updateFaceVerifyBadge('unauthorized', 'UNAUTHORIZED');
+        _showSessionIdentityAlert('Face mismatch detected — unauthorized user? Attendance tracking paused.');
+
+        // Log security violation
+        SecurityMonitor.recordViolation(
+          SecurityMonitor.VIOLATION.MULTI_FACE,
+          'Face identity mismatch during session (distance: ' + (data.distance ? data.distance.toFixed(3) : 'N/A') + ')'
+        );
+
+        showToast({
+          type: 'error',
+          title: 'Face Mismatch',
+          message: 'Face does not match registered identity. Attendance tracking paused.'
+        });
+
+        console.warn('[Dashboard] Face mismatch detected during session — warnings:', _identityWarnings);
+      });
+
+      // Update badge when face is re-verified (monitoring re-confirms match)
+      FaceVerifier.on('verified', function () {
+        if (_sessionFaceMonitoring) {
+          _updateFaceVerifyBadge('verified', 'FACE VERIFIED');
+          _hideSessionIdentityAlert();
+        }
+      });
 
       // ── Time Tracker Module ──
       var tracker = TimeTracker.init({
@@ -1533,6 +1652,14 @@
         FaceDetection.stop();
         Webcam.stop(true);
         SecurityMonitor.stop();
+
+        // Stop face verification monitoring on session expiry
+        if (_sessionFaceMonitoring) {
+          FaceVerifier.stopSessionMonitoring();
+          _sessionFaceMonitoring = false;
+          _identityWarnings = 0;
+          _hideSessionIdentityAlert();
+        }
 
         // Record completed session in history
         if (data && data.session) {

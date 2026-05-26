@@ -6,7 +6,7 @@
 var StudentCrud = (function () {
   'use strict';
 
-  var STORAGE_KEY = 'sys_student_records';
+  var STORAGE_KEY = 'sys_users';  // Shared with Auth module — single source of truth
   var _students = [];
   var _filtered = [];
   var _editingId = null;
@@ -188,8 +188,11 @@ var StudentCrud = (function () {
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
-        var data = JSON.parse(raw);
-        if (Array.isArray(data)) return data;
+        var users = JSON.parse(raw);
+        if (Array.isArray(users)) {
+          // Filter: only return students (not admins)
+          return users.filter(function (u) { return u.role === 'student'; });
+        }
       }
     } catch (e) { /* ignore */ }
     return [];
@@ -197,7 +200,17 @@ var StudentCrud = (function () {
 
   function _saveToStorage() {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(_students));
+      // Load all users (students + admins)
+      var raw = localStorage.getItem(STORAGE_KEY);
+      var allUsers = raw ? JSON.parse(raw) : [];
+      if (!Array.isArray(allUsers)) allUsers = [];
+
+      // Remove all existing students, keep admins and other roles
+      var nonStudents = allUsers.filter(function (u) { return u.role !== 'student'; });
+
+      // Merge: non-students + current students
+      var merged = nonStudents.concat(_students);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
     } catch (e) { /* quota exceeded */ }
   }
 
@@ -206,17 +219,19 @@ var StudentCrud = (function () {
   // ═══════════════════════════════════════════
 
   function _createStudent(data) {
+    var usnUpper = data.usn.toUpperCase().trim();
+
     // Check duplicate USN using find()
     var existing = _students.find(function (s) {
-      return s.usn.toUpperCase() === data.usn.toUpperCase();
+      return (s.usn || s.id || '').toUpperCase() === usnUpper;
     });
     if (existing) {
-      return { success: false, message: 'USN already exists: ' + existing.usn };
+      return { success: false, message: 'USN already exists: ' + (existing.usn || existing.id) };
     }
 
     // Check duplicate email using find()
     var emailDup = _students.find(function (s) {
-      return s.email.toLowerCase() === data.email.toLowerCase();
+      return (s.email || '').toLowerCase() === data.email.toLowerCase();
     });
     if (emailDup) {
       return { success: false, message: 'Email already registered: ' + emailDup.name };
@@ -230,16 +245,19 @@ var StudentCrud = (function () {
       return { success: false, message: 'Mobile already registered: ' + mobileDup.name };
     }
 
+    // Auth-compatible format: id = USN, role = 'student'
     var newStudent = {
-      id: 'STU_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 5),
-      usn: data.usn.toUpperCase().trim(),
+      id: usnUpper,
+      usn: usnUpper,
+      password: 'student123',  // Default password — student should change
       name: data.name.trim(),
+      role: 'student',
       dept: data.dept.toUpperCase().trim(),
       email: data.email.toLowerCase().trim(),
       mobile: data.mobile.trim(),
       semester: parseInt(data.semester, 10) || 1,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      hasFace: false,
+      createdAt: new Date().toISOString()
     };
 
     // push() — Add to array
@@ -267,9 +285,10 @@ var StudentCrud = (function () {
   }
 
   function _getStudentByUsn(usn) {
-    // find() — Find student by USN
+    // find() — Find student by USN (id IS the USN in aligned format)
+    var upper = usn.toUpperCase();
     return _students.find(function (s) {
-      return s.usn.toUpperCase() === usn.toUpperCase();
+      return (s.usn || s.id || '').toUpperCase() === upper;
     }) || null;
   }
 
@@ -291,17 +310,19 @@ var StudentCrud = (function () {
       return { success: false, message: 'Student not found.' };
     }
 
+    var usnUpper = data.usn.toUpperCase().trim();
+
     // Check duplicate USN (exclude current) using find()
     var usnDup = _students.find(function (s) {
-      return s.id !== id && s.usn.toUpperCase() === data.usn.toUpperCase();
+      return s.id !== id && (s.usn || s.id || '').toUpperCase() === usnUpper;
     });
     if (usnDup) {
-      return { success: false, message: 'USN already exists: ' + usnDup.usn };
+      return { success: false, message: 'USN already exists: ' + (usnDup.usn || usnDup.id) };
     }
 
     // Check duplicate email (exclude current) using find()
     var emailDup = _students.find(function (s) {
-      return s.id !== id && s.email.toLowerCase() === data.email.toLowerCase();
+      return s.id !== id && (s.email || '').toLowerCase() === data.email.toLowerCase();
     });
     if (emailDup) {
       return { success: false, message: 'Email already registered: ' + emailDup.name };
@@ -315,8 +336,9 @@ var StudentCrud = (function () {
       return { success: false, message: 'Mobile already registered: ' + mobileDup.name };
     }
 
-    // Update fields
-    _students[idx].usn = data.usn.toUpperCase().trim();
+    // Update fields (id IS the USN, so update both id and usn)
+    _students[idx].id = usnUpper;
+    _students[idx].usn = usnUpper;
     _students[idx].name = data.name.trim();
     _students[idx].dept = data.dept.toUpperCase().trim();
     _students[idx].email = data.email.toLowerCase().trim();
@@ -343,7 +365,7 @@ var StudentCrud = (function () {
 
     _pendingDeleteId = id;
     if (_dom.deleteName) _dom.deleteName.textContent = student.name;
-    if (_dom.deleteUsn) _dom.deleteUsn.textContent = student.usn;
+    if (_dom.deleteUsn) _dom.deleteUsn.textContent = student.usn || student.id;
     if (_dom.deleteModal) _dom.deleteModal.classList.add('active');
   }
 
@@ -375,7 +397,7 @@ var StudentCrud = (function () {
     _updateStats();
     _closeDeleteModal();
 
-    _showToast('success', 'Student Deleted', deleted.name + ' (' + deleted.usn + ') has been removed.');
+    _showToast('success', 'Student Deleted', deleted.name + ' (' + (deleted.usn || deleted.id) + ') has been removed.');
 
     // If we were editing this student, cancel the edit
     if (_editingId === _pendingDeleteId) {
@@ -395,10 +417,11 @@ var StudentCrud = (function () {
 
     // filter() — Filter students by search query and department
     _filtered = _students.filter(function (s) {
+      var usn = (s.usn || s.id || '').toLowerCase();
       var matchQuery = !query ||
-        s.name.toLowerCase().indexOf(query) !== -1 ||
-        s.usn.toLowerCase().indexOf(query) !== -1 ||
-        s.email.toLowerCase().indexOf(query) !== -1;
+        (s.name || '').toLowerCase().indexOf(query) !== -1 ||
+        usn.indexOf(query) !== -1 ||
+        (s.email || '').toLowerCase().indexOf(query) !== -1;
       var matchDept = !dept || s.dept === dept;
       return matchQuery && matchDept;
     });
@@ -441,7 +464,7 @@ var StudentCrud = (function () {
     } else {
       result = _createStudent(data);
       if (result.success) {
-        _showToast('success', 'Student Added', result.student.name + ' (' + result.student.usn + ') has been added.');
+        _showToast('success', 'Student Added', result.student.name + ' (' + (result.student.usn || result.student.id) + ') has been added.');
         _resetForm();
         _emit('create', { student: result.student });
       } else {
@@ -456,12 +479,12 @@ var StudentCrud = (function () {
 
     _editingId = id;
 
-    if (_dom.usn) _dom.usn.value = student.usn;
-    if (_dom.name) _dom.name.value = student.name;
-    if (_dom.dept) _dom.dept.value = student.dept;
-    if (_dom.email) _dom.email.value = student.email;
-    if (_dom.mobile) _dom.mobile.value = student.mobile;
-    if (_dom.semester) _dom.semester.value = student.semester;
+    if (_dom.usn) _dom.usn.value = student.usn || student.id || '';
+    if (_dom.name) _dom.name.value = student.name || '';
+    if (_dom.dept) _dom.dept.value = student.dept || '';
+    if (_dom.email) _dom.email.value = student.email || '';
+    if (_dom.mobile) _dom.mobile.value = student.mobile || '';
+    if (_dom.semester) _dom.semester.value = student.semester || 1;
 
     if (_dom.formTitle) _dom.formTitle.textContent = '// EDIT STUDENT RECORD';
     if (_dom.submitBtn) _dom.submitBtn.textContent = 'UPDATE RECORD';
@@ -526,12 +549,12 @@ var StudentCrud = (function () {
     // forEach() — Render each student row
     _filtered.forEach(function (s) {
       html += '<tr>';
-      html += '<td><span class="student-table__id">' + _esc(s.usn) + '</span></td>';
-      html += '<td>' + _esc(s.name) + '</td>';
-      html += '<td>' + _esc(s.dept) + '</td>';
-      html += '<td>' + _esc(s.email) + '</td>';
-      html += '<td>' + _esc(s.mobile) + '</td>';
-      html += '<td>Sem ' + s.semester + '</td>';
+      html += '<td><span class="student-table__id">' + _esc(s.usn || s.id) + '</span></td>';
+      html += '<td>' + _esc(s.name || '') + '</td>';
+      html += '<td>' + _esc(s.dept || '') + '</td>';
+      html += '<td>' + _esc(s.email || '') + '</td>';
+      html += '<td>' + _esc(s.mobile || '') + '</td>';
+      html += '<td>Sem ' + (s.semester || 1) + '</td>';
       html += '<td>';
       html += '<div class="crud-actions">';
       html += '<button class="crud-action crud-action--edit" data-action="edit" data-id="' + s.id + '" title="Edit">✎</button>';

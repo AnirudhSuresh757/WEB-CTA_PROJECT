@@ -122,6 +122,53 @@
             </div>
           </div>
 
+          <!-- Face Verification Area (shown after credential check) -->
+          <div id="faceVerifySection" style="display: none;">
+            <div class="verification-step" id="loginStepIndicator">
+              <span class="verification-step__dot done" id="loginStepDot1"></span>
+              <span>Credentials</span>
+              <span style="color: var(--text-dim);">→</span>
+              <span class="verification-step__dot active" id="loginStepDot2"></span>
+              <span>Face Verify</span>
+              <span style="color: var(--text-dim);">→</span>
+              <span class="verification-step__dot" id="loginStepDot3"></span>
+              <span>Access</span>
+            </div>
+
+            <div class="webcam-container" id="loginWebcamContainer">
+              <video class="webcam__video" id="loginWebcamVideo" autoplay muted playsinline></video>
+              <canvas class="face-overlay" id="loginFaceOverlay"></canvas>
+              <div class="webcam__overlay" id="loginWebcamOverlay">
+                <span class="webcam__overlay-icon">📷</span>
+                <span>Click to activate camera for face verification</span>
+              </div>
+            </div>
+
+            <div class="face-verify-status" id="loginFaceStatus">AWAITING FACE VERIFICATION</div>
+
+            <div class="face-scan-indicator" id="loginScanIndicator">
+              <div class="face-scan-indicator__spinner"></div>
+              <span>VERIFYING IDENTITY...</span>
+            </div>
+
+            <button class="btn-login" type="button" id="btnVerifyFace" style="width: 100%;">
+              Verify Face
+            </button>
+          </div>
+
+          <!-- Verification Overlay (shown on unauthorized) -->
+          <div class="verification-overlay" id="verificationOverlay">
+            <div class="verification-overlay__icon">⊘</div>
+            <div class="verification-overlay__title">UNAUTHORIZED USER</div>
+            <div class="verification-overlay__text">
+              Face does not match registered identity.<br>
+              This incident has been logged.
+            </div>
+            <button class="verification-overlay__btn" type="button" id="btnDismissOverlay">
+              Return to Login
+            </button>
+          </div>
+
           <!-- Submit -->
           <button class="btn-login" type="submit" id="btnLogin">
             Login
@@ -133,6 +180,106 @@
           <a href="student-register.html" style="font-family: var(--font-mono); font-size: 11px; color: var(--glow-lime); text-decoration: none; letter-spacing: 1px; opacity: 0.8; transition: opacity 0.2s;">
             New student? Register here →
           </a>
+        </div>
+
+        <!-- Forgot Password Link -->
+        <div style="text-align: center; margin-top: 8px;">
+          <a href="#" id="forgotPasswordLink" style="font-family: var(--font-mono); font-size: 11px; color: var(--accent-orange); text-decoration: none; letter-spacing: 1px; opacity: 0.8; transition: opacity 0.2s;">
+            Forgot password? →
+          </a>
+        </div>
+
+        <!-- Forgot Password Section (hidden by default) -->
+        <div id="forgotSection" style="display: none; margin-top: 16px; border-top: 1px solid var(--border-dim); padding-top: 16px;">
+
+          <!-- Step 1: Enter USN -->
+          <div id="forgotStep1">
+            <div style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; text-align: center;">
+              Reset Password — Step 1: Enter USN
+            </div>
+            <div class="field">
+              <label class="field__label" for="forgotUsn">University Seat Number</label>
+              <div class="field__input-wrap">
+                <input class="field__input" type="text" id="forgotUsn" placeholder="Enter your USN" autocomplete="off" spellcheck="false">
+                <span class="field__icon">#</span>
+                <div class="field__bar"></div>
+              </div>
+            </div>
+            <div class="error-msg" id="forgotError" role="alert">
+              <span class="error-msg__icon">!</span>
+              <span id="forgotErrorText"></span>
+            </div>
+            <button class="btn-login" type="button" id="btnForgotNext" style="width: 100%;">
+              Continue
+            </button>
+          </div>
+
+          <!-- Step 2: Face Verification -->
+          <div id="forgotStep2" style="display: none;">
+            <div style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; text-align: center;">
+              Reset Password — Step 2: Verify Face
+            </div>
+
+            <div class="webcam-container" id="forgotWebcamContainer">
+              <video class="webcam__video" id="forgotWebcamVideo" autoplay muted playsinline></video>
+              <canvas class="face-overlay" id="forgotFaceOverlay"></canvas>
+              <div class="webcam__overlay" id="forgotWebcamOverlay">
+                <span class="webcam__overlay-icon">📷</span>
+                <span>Click to activate camera</span>
+              </div>
+            </div>
+
+            <div class="face-verify-status" id="forgotFaceStatus">AWAITING FACE VERIFICATION</div>
+            <div class="face-scan-indicator" id="forgotScanIndicator">
+              <div class="face-scan-indicator__spinner"></div>
+              <span>VERIFYING IDENTITY...</span>
+            </div>
+
+            <button class="btn-login" type="button" id="btnForgotVerifyFace" style="width: 100%;" disabled>
+              Verify Face
+            </button>
+          </div>
+
+          <!-- Step 3: New Password -->
+          <div id="forgotStep3" style="display: none;">
+            <div style="font-family: var(--font-mono); font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; text-align: center;">
+              Reset Password — Step 3: New Password
+            </div>
+
+            <div class="success-msg" id="forgotSuccess" style="display: none;">
+              <span class="success-msg__icon">✓</span>
+              <span id="forgotSuccessText"></span>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="forgotNewPass">New Password</label>
+              <div class="field__input-wrap">
+                <input class="field__input" type="password" id="forgotNewPass" placeholder="Enter new password" autocomplete="new-password">
+                <span class="field__icon">*</span>
+                <div class="field__bar"></div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="forgotConfirmPass">Confirm Password</label>
+              <div class="field__input-wrap">
+                <input class="field__input" type="password" id="forgotConfirmPass" placeholder="Confirm new password" autocomplete="new-password">
+                <span class="field__icon">*</span>
+                <div class="field__bar"></div>
+              </div>
+            </div>
+
+            <button class="btn-login" type="button" id="btnForgotReset" style="width: 100%;">
+              Reset Password
+            </button>
+          </div>
+
+          <!-- Back to login -->
+          <div style="text-align: center; margin-top: 12px;">
+            <a href="#" id="forgotBackLink" style="font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); text-decoration: none; letter-spacing: 1px; transition: color 0.2s;">
+              ← Back to login
+            </a>
+          </div>
         </div>
 
         <!-- Status Bar -->
@@ -149,17 +296,25 @@
     </div>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+  <script src="js/dataReset.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/validator.js"></script>
+  <script src="js/faceVerifier.js"></script>
   <script>
     (function () {
       'use strict';
+
+      var MODEL_LOAD_TIMEOUT = 15000; // 15s max for model loading
 
       // Auto-redirect if already logged in as student
       if (Auth.isStudentLoggedIn()) {
         window.location.href = 'dashboard.html';
         return;
       }
+
+      // Ensure user database exists after data reset
+      Auth.initDatabase();
 
       var form = document.getElementById('loginForm');
       var usnInput = document.getElementById('usn');
@@ -169,6 +324,35 @@
       var errorMsg = document.getElementById('errorMsg');
       var errorText = document.getElementById('errorText');
       var clockDisplay = document.getElementById('clockDisplay');
+
+      // Face verification elements
+      var faceVerifySection = document.getElementById('faceVerifySection');
+      var loginWebcamVideo = document.getElementById('loginWebcamVideo');
+      var loginFaceOverlay = document.getElementById('loginFaceOverlay');
+      var loginWebcamOverlay = document.getElementById('loginWebcamOverlay');
+      var loginFaceStatus = document.getElementById('loginFaceStatus');
+      var loginScanIndicator = document.getElementById('loginScanIndicator');
+      var btnVerifyFace = document.getElementById('btnVerifyFace');
+      var verificationOverlay = document.getElementById('verificationOverlay');
+      var btnDismissOverlay = document.getElementById('btnDismissOverlay');
+      var loginStepDot1 = document.getElementById('loginStepDot1');
+      var loginStepDot2 = document.getElementById('loginStepDot2');
+      var loginStepDot3 = document.getElementById('loginStepDot3');
+
+      // State
+      var _loginStream = null;
+      var _credentialsValid = false;
+      var _verifiedUsn = '';
+      var _verifiedPassword = '';
+      var _verifiedLab = '';
+      var _modelLoadTimer = null;
+
+      // Initialize face verifier
+      var verifier = FaceVerifier.init({
+        videoEl: loginWebcamVideo,
+        statusEl: loginFaceStatus,
+        overlayEl: loginFaceOverlay
+      });
 
       // Field containers
       var usnField = usnInput.closest('.field');
@@ -217,12 +401,229 @@
         btnLogin.disabled = on;
         usnInput.disabled = on;
         passwordInput.disabled = on;
+        labSelect.disabled = on;
       }
 
-      // Form submission
+      // Reset loading + show error (prevents infinite spinner)
+      function failLogin(message) {
+        setLoading(false);
+        showError(message);
+      }
+
+      // ── Step Indicator ──
+      function updateLoginStep(step) {
+        loginStepDot1.className = 'verification-step__dot' +
+          (step === 'credentials' ? ' active' : ' done');
+        loginStepDot2.className = 'verification-step__dot' +
+          (step === 'face' ? ' active' : step === 'done' ? ' done' : '');
+        loginStepDot3.className = 'verification-step__dot' +
+          (step === 'done' ? ' done' : '');
+      }
+
+      // ── Webcam Management ──
+      function startLoginWebcam() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          loginFaceStatus.textContent = 'CAMERA NOT SUPPORTED';
+          loginFaceStatus.className = 'face-verify-status face-verify-status--error';
+          btnVerifyFace.disabled = false;
+          btnVerifyFace.textContent = 'Retry Camera';
+          return;
+        }
+
+        loginFaceStatus.textContent = 'STARTING CAMERA...';
+        loginFaceStatus.className = 'face-verify-status face-verify-status--loading';
+
+        navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480, facingMode: 'user' }, audio: false })
+          .then(function (stream) {
+            _loginStream = stream;
+            loginWebcamVideo.srcObject = stream;
+            loginWebcamVideo.play().catch(function () {});
+            loginWebcamOverlay.classList.add('hidden');
+            FaceVerifier.setVideoElement(loginWebcamVideo);
+            btnVerifyFace.disabled = false;
+            loginFaceStatus.textContent = 'CAMERA ACTIVE — CLICK VERIFY FACE';
+            loginFaceStatus.className = 'face-verify-status face-verify-status--face_verified';
+          })
+          .catch(function (err) {
+            loginFaceStatus.textContent = err.name === 'NotAllowedError' ? 'CAMERA ACCESS DENIED' : 'CAMERA ERROR';
+            loginFaceStatus.className = 'face-verify-status face-verify-status--error';
+            btnVerifyFace.disabled = false;
+            btnVerifyFace.textContent = 'Retry Camera';
+            console.error('[Login] Webcam error:', err);
+          });
+      }
+
+      function stopLoginWebcam() {
+        if (_loginStream) {
+          _loginStream.getTracks().forEach(function (t) { t.stop(); });
+          _loginStream = null;
+        }
+        loginWebcamVideo.srcObject = null;
+      }
+
+      // Click overlay to start webcam
+      loginWebcamOverlay.addEventListener('click', function () {
+        if (!_loginStream) startLoginWebcam();
+      });
+
+      // ── Face Verification ──
+      btnVerifyFace.addEventListener('click', function () {
+        if (!_loginStream) {
+          startLoginWebcam();
+          return;
+        }
+
+        btnVerifyFace.disabled = true;
+        btnVerifyFace.textContent = 'Verifying...';
+        loginScanIndicator.classList.add('active');
+        loginFaceStatus.textContent = 'SCANNING FACE...';
+        loginFaceStatus.className = 'face-verify-status face-verify-status--scanning';
+
+        FaceVerifier.verifyLogin(_verifiedUsn)
+          .then(function (result) {
+            loginScanIndicator.classList.remove('active');
+
+            if (result.success) {
+              // Face verified — complete login
+              loginFaceStatus.textContent = 'FACE VERIFIED — ACCESS GRANTED';
+              loginFaceStatus.className = 'face-verify-status face-verify-status--face_verified';
+              btnVerifyFace.textContent = '✓ Verified';
+              btnVerifyFace.style.background = '#00ff88';
+              btnVerifyFace.style.boxShadow = '0 0 40px rgba(0, 255, 136, 0.5)';
+              updateLoginStep('done');
+
+              // Store face verification state for dashboard session monitoring
+              try {
+                sessionStorage.setItem('sys_face_verified', 'true');
+                sessionStorage.setItem('sys_face_verified_usn', _verifiedUsn);
+              } catch (e) { /* ignore */ }
+
+              // Stop webcam and complete login
+              setTimeout(function () {
+                stopLoginWebcam();
+                _completeLogin(_verifiedUsn, _verifiedPassword, _verifiedLab);
+              }, 800);
+
+            } else {
+              // Face mismatch — unauthorized
+              loginFaceStatus.textContent = result.message.toUpperCase();
+              loginFaceStatus.className = 'face-verify-status face-verify-status--unauthorized';
+              btnVerifyFace.textContent = 'Retry Verification';
+              btnVerifyFace.disabled = false;
+
+              // Log security violation
+              _logSecurityViolation(_verifiedUsn, result.distance);
+
+              // Show unauthorized overlay for face mismatch
+              if (result.message && result.message.toLowerCase().indexOf('unauthorized') !== -1) {
+                verificationOverlay.classList.add('active');
+              }
+            }
+          })
+          .catch(function (err) {
+            loginScanIndicator.classList.remove('active');
+            loginFaceStatus.textContent = 'VERIFICATION ERROR';
+            loginFaceStatus.className = 'face-verify-status face-verify-status--error';
+            btnVerifyFace.disabled = false;
+            btnVerifyFace.textContent = 'Retry Verification';
+            console.error('[Login] Face verification error:', err);
+          });
+      });
+
+      // Dismiss unauthorized overlay
+      btnDismissOverlay.addEventListener('click', function () {
+        verificationOverlay.classList.remove('active');
+        _resetFaceSection();
+        stopLoginWebcam();
+      });
+
+      function _resetFaceSection() {
+        faceVerifySection.style.display = 'none';
+        btnLogin.style.display = '';
+        _credentialsValid = false;
+        setLoading(false);
+        usnInput.disabled = false;
+        passwordInput.disabled = false;
+        labSelect.disabled = false;
+        btnLogin.textContent = 'Login';
+        btnLogin.style.background = '';
+        btnLogin.style.boxShadow = '';
+        btnVerifyFace.textContent = 'Verify Face';
+        btnVerifyFace.style.background = '';
+        btnVerifyFace.style.boxShadow = '';
+        btnVerifyFace.disabled = false;
+      }
+
+      /**
+       * Complete login: create session and redirect.
+       * Called both for face-verified and non-face logins.
+       */
+      function _completeLogin(usn, password, labName) {
+        try {
+          var result = Auth.loginStudent(usn, password);
+          if (!result.success) {
+            failLogin(result.message);
+            return;
+          }
+
+          Auth.createStudentSession(result.user, labName);
+
+          btnLogin.textContent = 'ACCESS GRANTED';
+          btnLogin.classList.remove('loading');
+          btnLogin.style.background = '#7fff00';
+          btnLogin.style.boxShadow = '0 0 40px rgba(127, 255, 0, 0.5)';
+
+          setTimeout(function () {
+            window.location.href = 'dashboard.html';
+          }, 600);
+        } catch (err) {
+          console.error('[Login] Session creation failed:', err);
+          failLogin('Login failed: ' + (err.message || 'Unknown error'));
+        }
+      }
+
+      function _logSecurityViolation(usn, distance) {
+        try {
+          var logRaw = localStorage.getItem('sys_security_log');
+          var log;
+          try {
+            log = logRaw ? JSON.parse(logRaw) : null;
+          } catch (e) {
+            log = null;
+          }
+          // Normalize to SecurityMonitor expected format: {violations: [], warningCounts: {}}
+          if (!log || typeof log !== 'object') {
+            log = { violations: [], warningCounts: {} };
+          }
+          if (!Array.isArray(log.violations)) {
+            log.violations = [];
+          }
+          if (!log.warningCounts || typeof log.warningCounts !== 'object') {
+            log.warningCounts = {};
+          }
+          log.violations.push({
+            type: 'face_mismatch',
+            usn: usn,
+            distance: distance,
+            timestamp: new Date().toISOString(),
+            severity: 'critical',
+            message: 'Unauthorized face verification attempt at login'
+          });
+          // Keep last 100 violations
+          if (log.violations.length > 100) {
+            log.violations = log.violations.slice(-100);
+          }
+          localStorage.setItem('sys_security_log', JSON.stringify(log));
+        } catch (e) { /* ignore */ }
+      }
+
+      // Form submission — validate credentials, then show face verification
       form.addEventListener('submit', function (e) {
         e.preventDefault();
         hideError();
+
+        // If face section is showing, don't re-process credentials
+        if (faceVerifySection.style.display !== 'none') return;
 
         // Validate fields with inline errors
         var allValid = Validator.validateAll(formFields);
@@ -246,30 +647,68 @@
 
         setLoading(true);
 
-        // Authenticate student
+        // Authenticate credentials first
         setTimeout(function () {
-          var result = Auth.loginStudent(usn, password);
+          var result;
+
+          try {
+            result = Auth.loginStudent(usn, password);
+          } catch (err) {
+            console.error('[Login] Auth error:', err);
+            failLogin('Authentication error: ' + (err.message || 'Unknown'));
+            return;
+          }
 
           if (!result.success) {
-            setLoading(false);
-            showError(result.message);
+            failLogin(result.message);
             passwordInput.value = '';
             Validator.resetField(passwordField);
             passwordInput.focus();
             return;
           }
 
-          // Success — create student session and redirect to dashboard
-          Auth.createStudentSession(result.user, labName);
+          // Credentials valid — check if student has registered face
+          _verifiedUsn = usn;
+          _verifiedPassword = password;
+          _verifiedLab = labName;
 
-          btnLogin.textContent = 'ACCESS GRANTED';
-          btnLogin.classList.remove('loading');
-          btnLogin.style.background = '#7fff00';
-          btnLogin.style.boxShadow = '0 0 40px rgba(127, 255, 0, 0.5)';
+          if (FaceVerifier.hasRegisteredFace(usn.trim().toUpperCase())) {
+            // Student has a registered face — require verification
+            _credentialsValid = true;
+            faceVerifySection.style.display = '';
+            btnLogin.style.display = 'none';
+            usnInput.disabled = true;
+            passwordInput.disabled = true;
+            labSelect.disabled = true;
+            updateLoginStep('face');
 
-          setTimeout(function () {
-            window.location.href = 'dashboard.html';
-          }, 600);
+            // Load models with timeout
+            loginFaceStatus.textContent = 'LOADING FACE MODELS...';
+            loginFaceStatus.className = 'face-verify-status face-verify-status--loading';
+
+            var modelTimeout = setTimeout(function () {
+              loginFaceStatus.textContent = 'MODEL LOAD TIMEOUT — CLICK RETRY';
+              loginFaceStatus.className = 'face-verify-status face-verify-status--error';
+              btnVerifyFace.disabled = false;
+              btnVerifyFace.textContent = 'Retry Models';
+              console.warn('[Login] Model load timed out');
+            }, MODEL_LOAD_TIMEOUT);
+
+            FaceVerifier.loadModels().then(function () {
+              clearTimeout(modelTimeout);
+              startLoginWebcam();
+            }).catch(function (err) {
+              clearTimeout(modelTimeout);
+              console.warn('[Login] Model load failed:', err);
+              loginFaceStatus.textContent = 'MODELS FAILED TO LOAD — CLICK RETRY';
+              loginFaceStatus.className = 'face-verify-status face-verify-status--error';
+              btnVerifyFace.disabled = false;
+              btnVerifyFace.textContent = 'Retry Models';
+            });
+          } else {
+            // No registered face — allow normal login directly
+            _completeLogin(usn, password, labName);
+          }
 
         }, 1000);
       });
@@ -299,6 +738,277 @@
           passIcon.textContent = visible ? 'X' : '*';
           passIcon.style.color = visible ? 'var(--glow-lime)' : '';
         });
+      }
+
+      // Cleanup on page unload
+      window.addEventListener('beforeunload', function () {
+        stopLoginWebcam();
+        _stopForgotWebcam();
+      });
+
+      // ═══════════════════════════════════════════
+      //  FORGOT PASSWORD FLOW
+      // ═══════════════════════════════════════════
+
+      var forgotLink = document.getElementById('forgotPasswordLink');
+      var forgotSection = document.getElementById('forgotSection');
+      var forgotStep1 = document.getElementById('forgotStep1');
+      var forgotStep2 = document.getElementById('forgotStep2');
+      var forgotStep3 = document.getElementById('forgotStep3');
+      var forgotUsn = document.getElementById('forgotUsn');
+      var forgotError = document.getElementById('forgotError');
+      var forgotErrorText = document.getElementById('forgotErrorText');
+      var forgotSuccess = document.getElementById('forgotSuccess');
+      var forgotSuccessText = document.getElementById('forgotSuccessText');
+      var btnForgotNext = document.getElementById('btnForgotNext');
+      var btnForgotVerifyFace = document.getElementById('btnForgotVerifyFace');
+      var btnForgotReset = document.getElementById('btnForgotReset');
+      var forgotBackLink = document.getElementById('forgotBackLink');
+
+      var forgotWebcamVideo = document.getElementById('forgotWebcamVideo');
+      var forgotFaceOverlay = document.getElementById('forgotFaceOverlay');
+      var forgotWebcamOverlay = document.getElementById('forgotWebcamOverlay');
+      var forgotFaceStatus = document.getElementById('forgotFaceStatus');
+      var forgotScanIndicator = document.getElementById('forgotScanIndicator');
+
+      var _forgotStream = null;
+      var _forgotUsn = '';
+
+      // Toggle forgot section visibility
+      forgotLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        hideError();
+        forgotSection.style.display = forgotSection.style.display === 'none' ? '' : 'none';
+        if (forgotSection.style.display === 'none') {
+          _resetForgotFlow();
+        }
+      });
+
+      forgotBackLink.addEventListener('click', function (e) {
+        e.preventDefault();
+        _resetForgotFlow();
+        forgotSection.style.display = 'none';
+      });
+
+      function _resetForgotFlow() {
+        _stopForgotWebcam();
+        _forgotUsn = '';
+        forgotStep1.style.display = '';
+        forgotStep2.style.display = 'none';
+        forgotStep3.style.display = 'none';
+        forgotUsn.value = '';
+        forgotError.classList.remove('visible');
+        forgotSuccess.style.display = 'none';
+        forgotFaceStatus.textContent = 'AWAITING FACE VERIFICATION';
+        forgotFaceStatus.className = 'face-verify-status';
+        btnForgotVerifyFace.disabled = true;
+        btnForgotVerifyFace.textContent = 'Verify Face';
+        btnForgotVerifyFace.style.background = '';
+        btnForgotVerifyFace.style.boxShadow = '';
+      }
+
+      // Step 1: Validate USN
+      btnForgotNext.addEventListener('click', function () {
+        forgotError.classList.remove('visible');
+        var usn = forgotUsn.value.trim();
+
+        if (!usn) {
+          _showForgotError('Please enter your USN.');
+          return;
+        }
+
+        if (usn.length < 6) {
+          _showForgotError('USN must be at least 6 characters.');
+          return;
+        }
+
+        var student = Auth.findStudent(usn);
+        if (!student) {
+          _showForgotError('No student found with this USN.');
+          return;
+        }
+
+        if (!student.hasFace) {
+          _showForgotError('No face registered for this account. Face verification is required for password reset.');
+          return;
+        }
+
+        // USN valid and has face — proceed to face verification
+        _forgotUsn = usn.toUpperCase();
+        forgotStep1.style.display = 'none';
+        forgotStep2.style.display = '';
+
+        // Load models and start webcam
+        forgotFaceStatus.textContent = 'LOADING FACE MODELS...';
+        forgotFaceStatus.className = 'face-verify-status face-verify-status--loading';
+
+        var modelTimeout = setTimeout(function () {
+          forgotFaceStatus.textContent = 'MODEL LOAD TIMEOUT — CLICK RETRY';
+          forgotFaceStatus.className = 'face-verify-status face-verify-status--error';
+          btnForgotVerifyFace.disabled = false;
+        }, MODEL_LOAD_TIMEOUT);
+
+        FaceVerifier.loadModels().then(function () {
+          clearTimeout(modelTimeout);
+          _startForgotWebcam();
+        }).catch(function (err) {
+          clearTimeout(modelTimeout);
+          forgotFaceStatus.textContent = 'MODELS FAILED TO LOAD';
+          forgotFaceStatus.className = 'face-verify-status face-verify-status--error';
+          btnForgotVerifyFace.disabled = false;
+          console.error('[Forgot] Model load failed:', err);
+        });
+      });
+
+      // Step 2: Face Verification
+      forgotWebcamOverlay.addEventListener('click', function () {
+        if (!_forgotStream) _startForgotWebcam();
+      });
+
+      function _startForgotWebcam() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          forgotFaceStatus.textContent = 'CAMERA NOT SUPPORTED';
+          forgotFaceStatus.className = 'face-verify-status face-verify-status--error';
+          btnForgotVerifyFace.disabled = false;
+          return;
+        }
+
+        forgotFaceStatus.textContent = 'STARTING CAMERA...';
+        forgotFaceStatus.className = 'face-verify-status face-verify-status--loading';
+
+        navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480, facingMode: 'user' }, audio: false })
+          .then(function (stream) {
+            _forgotStream = stream;
+            forgotWebcamVideo.srcObject = stream;
+            forgotWebcamVideo.play().catch(function () {});
+            forgotWebcamOverlay.classList.add('hidden');
+            FaceVerifier.setVideoElement(forgotWebcamVideo);
+            btnForgotVerifyFace.disabled = false;
+            forgotFaceStatus.textContent = 'CAMERA ACTIVE — CLICK VERIFY FACE';
+            forgotFaceStatus.className = 'face-verify-status face-verify-status--face_verified';
+          })
+          .catch(function (err) {
+            forgotFaceStatus.textContent = err.name === 'NotAllowedError' ? 'CAMERA ACCESS DENIED' : 'CAMERA ERROR';
+            forgotFaceStatus.className = 'face-verify-status face-verify-status--error';
+            btnForgotVerifyFace.disabled = false;
+            console.error('[Forgot] Webcam error:', err);
+          });
+      }
+
+      function _stopForgotWebcam() {
+        if (_forgotStream) {
+          _forgotStream.getTracks().forEach(function (t) { t.stop(); });
+          _forgotStream = null;
+        }
+        if (forgotWebcamVideo) forgotWebcamVideo.srcObject = null;
+      }
+
+      btnForgotVerifyFace.addEventListener('click', function () {
+        if (!_forgotStream) {
+          _startForgotWebcam();
+          return;
+        }
+
+        btnForgotVerifyFace.disabled = true;
+        btnForgotVerifyFace.textContent = 'Verifying...';
+        forgotScanIndicator.classList.add('active');
+        forgotFaceStatus.textContent = 'SCANNING FACE...';
+        forgotFaceStatus.className = 'face-verify-status face-verify-status--scanning';
+
+        FaceVerifier.verifyLogin(_forgotUsn)
+          .then(function (result) {
+            forgotScanIndicator.classList.remove('active');
+
+            if (result.success) {
+              // Face verified — show password reset form
+              forgotFaceStatus.textContent = 'FACE VERIFIED — IDENTITY CONFIRMED';
+              forgotFaceStatus.className = 'face-verify-status face-verify-status--face_verified';
+
+              setTimeout(function () {
+                _stopForgotWebcam();
+                forgotStep2.style.display = 'none';
+                forgotStep3.style.display = '';
+              }, 800);
+            } else {
+              forgotFaceStatus.textContent = result.message.toUpperCase();
+              forgotFaceStatus.className = 'face-verify-status face-verify-status--unauthorized';
+              btnForgotVerifyFace.textContent = 'Retry Verification';
+              btnForgotVerifyFace.disabled = false;
+
+              _logSecurityViolation(_forgotUsn, result.distance);
+            }
+          })
+          .catch(function (err) {
+            forgotScanIndicator.classList.remove('active');
+            forgotFaceStatus.textContent = 'VERIFICATION ERROR';
+            forgotFaceStatus.className = 'face-verify-status face-verify-status--error';
+            btnForgotVerifyFace.disabled = false;
+            btnForgotVerifyFace.textContent = 'Retry Verification';
+            console.error('[Forgot] Face verification error:', err);
+          });
+      });
+
+      // Step 3: Reset Password
+      btnForgotReset.addEventListener('click', function () {
+        forgotError.classList.remove('visible');
+        forgotSuccess.style.display = 'none';
+
+        var newPass = document.getElementById('forgotNewPass').value;
+        var confirmPass = document.getElementById('forgotConfirmPass').value;
+
+        if (!newPass) {
+          _showForgotError('Please enter a new password.');
+          return;
+        }
+
+        if (newPass.length < 6) {
+          _showForgotError('Password must be at least 6 characters.');
+          return;
+        }
+
+        if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(newPass)) {
+          _showForgotError('Password must contain uppercase, lowercase, and number.');
+          return;
+        }
+
+        if (newPass !== confirmPass) {
+          _showForgotError('Passwords do not match.');
+          return;
+        }
+
+        btnForgotReset.disabled = true;
+        btnForgotReset.textContent = 'Resetting...';
+
+        setTimeout(function () {
+          var result = Auth.resetPassword(_forgotUsn, newPass);
+
+          btnForgotReset.disabled = false;
+          btnForgotReset.textContent = 'Reset Password';
+
+          if (result.success) {
+            forgotError.classList.remove('visible');
+            forgotSuccessText.textContent = 'Password reset successfully. You can now login with your new password.';
+            forgotSuccess.style.display = 'flex';
+            document.getElementById('forgotNewPass').value = '';
+            document.getElementById('forgotConfirmPass').value = '';
+
+            // Auto-return to login after 3s
+            setTimeout(function () {
+              _resetForgotFlow();
+              forgotSection.style.display = 'none';
+            }, 3000);
+          } else {
+            _showForgotError(result.message);
+          }
+        }, 800);
+      });
+
+      function _showForgotError(message) {
+        forgotErrorText.textContent = message;
+        forgotError.classList.add('visible');
+        forgotError.style.animation = 'none';
+        forgotError.offsetHeight;
+        forgotError.style.animation = '';
       }
     })();
   </script>

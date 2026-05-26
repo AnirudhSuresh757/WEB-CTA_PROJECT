@@ -5,6 +5,7 @@
  *   - Active session with live countdown
  *   - Upcoming scheduled sessions
  *   - Completed session history
+ *   - Tutorial / Demo lab (always accessible)
  */
 var LabSessions = (function () {
   'use strict';
@@ -14,16 +15,37 @@ var LabSessions = (function () {
   var LAB_DURATION = 2 * 60 * 60; // 2 hours
 
   // ── Default Schedule ──
+  // Each slot: day, startHour, startMin, endHour, endMin, label, code
+  // Timings: Morning 10:30–12:30, Afternoon 2:30–4:30
   var DEFAULT_SCHEDULE = [
-    { id: 'slot-01', day: 'Mon', startHour: 9,  endHour: 11, label: 'Morning Lab' },
-    { id: 'slot-02', day: 'Mon', startHour: 14, endHour: 16, label: 'Afternoon Lab' },
-    { id: 'slot-03', day: 'Tue', startHour: 10, endHour: 12, label: 'Morning Lab' },
-    { id: 'slot-04', day: 'Wed', startHour: 9,  endHour: 11, label: 'Morning Lab' },
-    { id: 'slot-05', day: 'Wed', startHour: 14, endHour: 16, label: 'Afternoon Lab' },
-    { id: 'slot-06', day: 'Thu', startHour: 10, endHour: 12, label: 'Morning Lab' },
-    { id: 'slot-07', day: 'Fri', startHour: 9,  endHour: 11, label: 'Morning Lab' },
-    { id: 'slot-08', day: 'Fri', startHour: 14, endHour: 16, label: 'Afternoon Lab' }
+    // ── Monday ──
+    { id: 'slot-01', day: 'Mon', startHour: 10, startMin: 30, endHour: 12, endMin: 30, label: 'DBMS Lab',            code: 'CS401' },
+    { id: 'slot-02', day: 'Mon', startHour: 14, startMin: 30, endHour: 16, endMin: 30, label: 'Operating Systems Lab', code: 'CS402' },
+
+    // ── Tuesday ──
+    { id: 'slot-03', day: 'Tue', startHour: 10, startMin: 30, endHour: 12, endMin: 30, label: 'Operating Systems Lab', code: 'CS402' },
+    { id: 'slot-04', day: 'Tue', startHour: 14, startMin: 30, endHour: 16, endMin: 30, label: 'Computer Networks Lab', code: 'CS403' },
+
+    // ── Wednesday ──
+    { id: 'slot-05', day: 'Wed', startHour: 10, startMin: 30, endHour: 12, endMin: 30, label: 'Computer Networks Lab', code: 'CS403' },
+    { id: 'slot-06', day: 'Wed', startHour: 14, startMin: 30, endHour: 16, endMin: 30, label: 'Java Programming Lab',  code: 'CS404' },
+
+    // ── Thursday ──
+    { id: 'slot-07', day: 'Thu', startHour: 10, startMin: 30, endHour: 12, endMin: 30, label: 'Java Programming Lab',  code: 'CS404' },
+    { id: 'slot-08', day: 'Thu', startHour: 14, startMin: 30, endHour: 16, endMin: 30, label: 'Web Technology Lab',    code: 'CS405' },
+
+    // ── Friday ──
+    { id: 'slot-09', day: 'Fri', startHour: 10, startMin: 30, endHour: 12, endMin: 30, label: 'Web Technology Lab',    code: 'CS405' },
+    { id: 'slot-10', day: 'Fri', startHour: 14, startMin: 30, endHour: 16, endMin: 30, label: 'AI/ML Lab',             code: 'CS406' }
   ];
+
+  // Tutorial / Demo Lab — always accessible, not tied to a day
+  var DEMO_LAB = {
+    id: 'demo-lab',
+    label: 'Tutorial / Demo Lab',
+    code: 'DEMO-01',
+    isDemo: true
+  };
 
   var DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -112,12 +134,13 @@ var LabSessions = (function () {
   function getNextUpcoming() {
     var now = new Date();
     var currentDay = DAY_NAMES[now.getDay()];
-    var currentHour = now.getHours();
+    var currentMinutes = now.getHours() * 60 + now.getMinutes();
 
     // First check today's remaining slots
     for (var i = 0; i < DEFAULT_SCHEDULE.length; i++) {
       var slot = DEFAULT_SCHEDULE[i];
-      if (slot.day === currentDay && slot.startHour > currentHour) {
+      var slotStartMin = slot.startHour * 60 + (slot.startMin || 0);
+      if (slot.day === currentDay && slotStartMin > currentMinutes) {
         return _formatSlot(slot, now);
       }
     }
@@ -144,54 +167,80 @@ var LabSessions = (function () {
   function getTodaySchedule() {
     var now = new Date();
     var currentDay = DAY_NAMES[now.getDay()];
-    var currentHour = now.getHours();
+    var currentMinutes = now.getHours() * 60 + now.getMinutes();
     var result = [];
 
     for (var i = 0; i < DEFAULT_SCHEDULE.length; i++) {
       var slot = DEFAULT_SCHEDULE[i];
       if (slot.day === currentDay) {
+        var slotStartMin = slot.startHour * 60 + (slot.startMin || 0);
+        var slotEndMin = slot.endHour * 60 + (slot.endMin || 0);
         var status = 'upcoming';
-        if (slot.endHour <= currentHour) {
+        if (slotEndMin <= currentMinutes) {
           status = 'completed';
-        } else if (slot.startHour <= currentHour && slot.endHour > currentHour) {
+        } else if (slotStartMin <= currentMinutes && slotEndMin > currentMinutes) {
           status = 'active';
         }
         result.push({
           id: slot.id,
           label: slot.label,
+          code: slot.code || '',
           startHour: slot.startHour,
+          startMin: slot.startMin || 0,
           endHour: slot.endHour,
-          startTime: _formatHour(slot.startHour),
-          endTime: _formatHour(slot.endHour),
+          endMin: slot.endMin || 0,
+          startTime: _formatTime(slot.startHour, slot.startMin || 0),
+          endTime: _formatTime(slot.endHour, slot.endMin || 0),
+          duration: (slotEndMin - slotStartMin) / 60,
           status: status
         });
       }
     }
+
+    // Always append Tutorial / Demo Lab at the end
+    result.push({
+      id: DEMO_LAB.id,
+      label: DEMO_LAB.label,
+      code: DEMO_LAB.code,
+      startTime: 'Anytime',
+      endTime: 'Anytime',
+      duration: null,
+      status: 'demo',
+      isDemo: true
+    });
 
     return result;
   }
 
   function _formatSlot(slot, refDate) {
     var date = refDate || new Date();
+    var startMin = slot.startMin || 0;
+    var endMin = slot.endMin || 0;
     return {
       id: slot.id,
       day: slot.day,
       label: slot.label,
+      code: slot.code || '',
       startHour: slot.startHour,
+      startMin: startMin,
       endHour: slot.endHour,
-      startTime: _formatHour(slot.startHour),
-      endTime: _formatHour(slot.endHour),
+      endMin: endMin,
+      startTime: _formatTime(slot.startHour, startMin),
+      endTime: _formatTime(slot.endHour, endMin),
+      duration: ((slot.endHour * 60 + endMin) - (slot.startHour * 60 + startMin)) / 60,
       dateStr: date.getFullYear() + '-' +
         String(date.getMonth() + 1).padStart(2, '0') + '-' +
         String(date.getDate()).padStart(2, '0'),
-      isToday: _isToday(date)
+      isToday: _isToday(date),
+      status: 'scheduled'
     };
   }
 
-  function _formatHour(h) {
+  function _formatTime(h, m) {
+    var min = m || 0;
     var period = h >= 12 ? 'PM' : 'AM';
     var hour = h % 12 || 12;
-    return hour + ':00 ' + period;
+    return hour + ':' + String(min).padStart(2, '0') + ' ' + period;
   }
 
   function _isToday(date) {
@@ -399,14 +448,30 @@ var LabSessions = (function () {
     var html = '';
     for (var i = 0; i < schedule.length; i++) {
       var s = schedule[i];
-      var iconClass = s.status === 'active' ? 'tracker-status--tracking'
-        : s.status === 'completed' ? 'tracker-status--expired' : '';
+      var statusClass = '';
+      var statusLabel = '';
 
-      html += '<div class="tracker__row">';
-      html += '  <span class="tracker__row-label">' + _esc(s.label) + '</span>';
-      html += '  <span class="tracker__row-value ' + iconClass + '" style="font-size:14px;">';
-      html += '    ' + s.startTime + ' — ' + s.endTime;
-      html += '  </span>';
+      if (s.isDemo) {
+        statusClass = 'lab-schedule__item--demo';
+        statusLabel = 'DEMO';
+      } else if (s.status === 'active') {
+        statusClass = 'lab-schedule__item--active';
+        statusLabel = 'LIVE';
+      } else if (s.status === 'completed') {
+        statusClass = 'lab-schedule__item--completed';
+        statusLabel = 'DONE';
+      } else {
+        statusLabel = s.startTime + ' — ' + s.endTime;
+      }
+
+      html += '<div class="lab-schedule__item ' + statusClass + '">';
+      html += '  <div class="lab-schedule__info">';
+      html += '    <span class="lab-schedule__name">' + _esc(s.label) + '</span>';
+      if (s.code) {
+        html += '    <span class="lab-schedule__code">' + _esc(s.code) + '</span>';
+      }
+      html += '  </div>';
+      html += '  <span class="lab-schedule__time">' + statusLabel + '</span>';
       html += '</div>';
     }
 
@@ -471,6 +536,8 @@ var LabSessions = (function () {
 
   // ── Public API ──
   return {
+    DEMO_LAB: DEMO_LAB,
+    DEFAULT_SCHEDULE: DEFAULT_SCHEDULE,
     getStatus: getStatus,
     getNextUpcoming: getNextUpcoming,
     getTodaySchedule: getTodaySchedule,

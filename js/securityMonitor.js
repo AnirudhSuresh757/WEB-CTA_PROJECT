@@ -52,6 +52,8 @@ var SecurityMonitor = (function () {
   var _toastQueue = [];
   var _toastTimer = null;
   var _devToolsOpen = false;
+  var _lastViolationByType = {};   // cooldown: last recorded timestamp per type
+  var _violationCooldownMs = 5000; // 5s cooldown between same-type violations
 
   // ── Initialize ──
 
@@ -109,6 +111,13 @@ var SecurityMonitor = (function () {
    */
   function recordViolation(type, detail) {
     var now = Date.now();
+
+    // Cooldown: skip if same type was recorded recently
+    if (_lastViolationByType[type] && (now - _lastViolationByType[type]) < _violationCooldownMs) {
+      return null; // silently skip
+    }
+    _lastViolationByType[type] = now;
+
     var severity = VIOLATION_SEVERITY[type] || 'low';
     var label = VIOLATION_LABELS[type] || type;
 

@@ -9,7 +9,9 @@ var FaceDetection = (function () {
   var MODEL_CDN_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/model';
   var DETECTION_INTERVAL = 200;      // ms between detections
   var NO_FACE_PAUSE_DELAY = 5000;    // ms before pausing uptime timer
-  var MIN_CONFIDENCE = 0.4;
+  var MIN_CONFIDENCE = 0.5;          // raise from 0.4 to filter noise
+  var MULTI_FACE_CONFIRM_FRAMES = 5; // consecutive multi-face frames before warning
+  var MULTI_FACE_HIGH_CONFIDENCE = 0.6; // only count extra faces above this confidence
   var MAX_CONSECUTIVE_ERRORS = 10;   // stop loop after this many errors
 
   // ── State ──
@@ -25,6 +27,8 @@ var FaceDetection = (function () {
   var _noFaceSince = null;
   var _timerPaused = false;
   var _consecutiveErrors = 0;
+  var _multiFaceFrameCount = 0;      // consecutive frames with multiple high-confidence faces
+  var _multiFaceEventFired = false;  // prevent repeated multiFace events until resolved
   var _callbacks = {};
   var _dom = {};
 
@@ -264,8 +268,30 @@ var FaceDetection = (function () {
   }
 
   function _processDetections(detections) {
-    var count = detections.length;
-    _lastFaceCount = count;
+    // Filter: only keep detections with confidence above threshold
+    var highConf = detections.filter(function (d) {
+      return d.score >= MIN_CONFIDENCE;
+    });
+
+    // Sort by area (largest first) — primary face is the largest
+    highConf.sort(function (a, b) {
+      var areaA = a.box.width * a.box.height;
+      var areaB = b.box.width * b.box.height;
+      return areaB - areaA;
+    });
+
+    // For multi-face: require extra faces to also be high-confidence
+    // This prevents false positives from noise, partial face fragments, etc.
+    var primaryFace = highConf[0] || null;
+    var extraFaces = [];
+    if (primaryFace) {
+      extraFaces = highConf.filter(function (d) {
+        return d !== primaryFace && d.score >= MULTI_FACE_HIGH_CONFIDENCE;
+      });
+    }
+
+    var effectiveCount = primaryFace ? 1 + extraFaces.length : 0;
+    _lastFaceCount = effectiveCount;
 
     // Resize overlay to match video display size
     _resizeOverlay();
@@ -273,16 +299,20 @@ var FaceDetection = (function () {
     // Clear previous drawings
     _clearOverlay();
 
-    if (count === 0) {
+    if (effectiveCount === 0) {
+      _multiFaceFrameCount = 0;
+      _multiFaceEventFired = false;
       _handleNoFace();
-    } else if (count === 1) {
-      _handleSingleFace(detections[0]);
+    } else if (effectiveCount === 1) {
+      _multiFaceFrameCount = 0;
+      _multiFaceEventFired = false;
+      _handleSingleFace(primaryFace);
     } else {
-      _handleMultiFace(detections);
+      _handleMultiFace([primaryFace].concat(extraFaces));
     }
 
     // Update face count display
-    _updateFaceCount(count);
+    _updateFaceCount(effectiveCount);
   }
 
   // ── Detection Handlers ──
@@ -332,8 +362,8 @@ var FaceDetection = (function () {
   }
 
   function _handleMultiFace(detections) {
-    // Use the largest face as primary
-    var largest = _getLargestFace(detections);
+    // Use the largest face as primary (first element after sort)
+    var largest = detections[0];
     var confidence = largest.score;
     _lastConfidence = confidence;
     _updateConfidence(confidence);
@@ -348,16 +378,26 @@ var FaceDetection = (function () {
     // Reset no-face tracking
     _noFaceSince = null;
 
-    // Resume timer if it was paused
-    if (_timerPaused) {
-      _timerPaused = false;
-      console.log('[FaceDetection] Timer resumed — face detected (multi-face, confidence:', Math.round(confidence * 100) + '%)');
-      _fire('timerResumed', { confidence: confidence });
-    }
+    // Debounce: only trigger multi-face warning after N consecutive frames
+    _multiFaceFrameCount++;
 
-    console.log('[FaceDetection] Multiple faces detected:', detections.length);
-    _setStatus(FACE_STATUS.MULTI_FACE);
-    _fire('multiFace', { count: detections.length, confidence: confidence });
+    if (_multiFaceFrameCount >= MULTI_FACE_CONFIRM_FRAMES) {
+      // Confirmed multi-face — warn user (fire event only once until resolved)
+      if (_timerPaused) {
+        _timerPaused = false;
+        _fire('timerResumed', { confidence: confidence });
+      }
+
+      _setStatus(FACE_STATUS.MULTI_FACE);
+      if (!_multiFaceEventFired) {
+        _multiFaceEventFired = true;
+        _fire('multiFace', { count: detections.length, confidence: confidence });
+      }
+    } else {
+      // Still accumulating frames — treat as single face (primary only) for now
+      _setStatus(FACE_STATUS.FACE_FOUND);
+      _fire('faceDetected', { confidence: confidence, box: largest.box });
+    }
   }
 
   function _getLargestFace(detections) {

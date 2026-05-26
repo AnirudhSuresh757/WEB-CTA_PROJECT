@@ -750,6 +750,11 @@ select.field__input option[value=""] {
   to { transform: rotate(360deg); }
 }
 
+@keyframes statusPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
 /* Success state */
 .btn-login.success {
   background: var(--success-green);
@@ -1407,6 +1412,556 @@ select.field__input option[value=""] {
   .login {
     margin-top: -40px;
   }
+}
+
+/* ═══════════════════════════════════════════
+   FACE VERIFICATION — Registration & Login
+   ═══════════════════════════════════════════ */
+
+/* ── Face Enrollment Section (registration) ── */
+.face-enroll {
+  position: relative;
+  border: 1px solid var(--border-dim);
+  border-radius: var(--radius);
+  background: var(--bg-primary);
+  overflow: hidden;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.face-enroll__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-dim);
+}
+
+.face-enroll__title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.face-enroll__badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--accent-orange-dim);
+  color: var(--accent-orange);
+  border: 1px solid var(--accent-orange-mid);
+}
+
+.face-enroll__badge--ready {
+  background: var(--accent-orange-dim);
+  color: var(--accent-orange);
+  border-color: var(--accent-orange-mid);
+}
+
+.face-enroll__badge--done {
+  background: var(--glow-lime-dim);
+  color: var(--glow-lime);
+  border-color: var(--glow-lime-mid);
+}
+
+/* ── Webcam viewport inside enrollment ── */
+.face-enroll__viewport {
+  position: relative;
+  width: 100%;
+  background: #000;
+  overflow: hidden;
+}
+
+.face-enroll__viewport video {
+  width: 100%;
+  display: block;
+  background: #000;
+  min-height: 200px;
+}
+
+.face-enroll__viewport .face-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ── Camera placeholder (inactive state) ── */
+.face-enroll__placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 200px;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.6);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-align: center;
+  cursor: pointer;
+  transition: color var(--transition), background var(--transition);
+}
+
+.face-enroll__placeholder:hover {
+  color: var(--glow-lime);
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.face-enroll__placeholder-icon {
+  font-size: 32px;
+  opacity: 0.6;
+}
+
+.face-enroll__placeholder.hidden {
+  display: none;
+}
+
+/* ── Status bar inside enrollment ── */
+.face-enroll__status {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 8px 14px;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-dim);
+  transition: color 0.3s ease;
+}
+
+.face-enroll__status--ready {
+  color: var(--accent-orange);
+}
+
+.face-enroll__status--scanning {
+  color: var(--accent-orange);
+  animation: statusPulse 1.2s ease-in-out infinite;
+}
+
+.face-enroll__status--capturing {
+  color: var(--accent-orange);
+  animation: statusPulse 0.8s ease-in-out infinite;
+}
+
+.face-enroll__status--success {
+  color: var(--glow-lime);
+  text-shadow: 0 0 8px var(--glow-lime-dim);
+}
+
+.face-enroll__status--error {
+  color: var(--error-red);
+}
+
+.face-enroll__status--no_face {
+  color: var(--accent-orange);
+}
+
+.face-enroll__status--multi_face {
+  color: var(--error-red);
+  animation: statusPulse 0.6s ease-in-out infinite;
+}
+
+.face-enroll__status--denied {
+  color: var(--error-red);
+}
+
+/* ── Action buttons inside enrollment ── */
+.face-enroll__actions {
+  display: flex;
+  gap: 8px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--border-dim);
+}
+
+.face-enroll__btn {
+  flex: 1;
+  padding: 10px 14px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border: 1px solid var(--border-glow);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--glow-lime);
+  cursor: pointer;
+  transition: all var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.face-enroll__btn:hover:not(:disabled) {
+  background: var(--glow-lime-dim);
+  border-color: var(--glow-lime-mid);
+  box-shadow: 0 0 16px rgba(var(--glow-lime-rgb), 0.15);
+}
+
+.face-enroll__btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.face-enroll__btn--capture {
+  background: var(--glow-lime);
+  color: var(--bg-primary);
+  border-color: var(--glow-lime);
+  box-shadow: 0 0 16px rgba(var(--glow-lime-rgb), 0.2);
+}
+
+.face-enroll__btn--capture:hover:not(:disabled) {
+  background: var(--glow-lime-intense);
+  box-shadow: 0 0 30px rgba(var(--glow-lime-rgb), 0.3);
+  transform: translateY(-1px);
+}
+
+.face-enroll__btn--capture:disabled {
+  background: var(--glow-lime);
+  color: var(--bg-primary);
+}
+
+.face-enroll__btn--captured {
+  background: var(--glow-lime);
+  color: var(--bg-primary);
+  border-color: var(--glow-lime);
+  box-shadow: 0 0 30px rgba(var(--glow-lime-rgb), 0.3);
+  pointer-events: none;
+}
+
+/* ── Scan indicator inside enrollment ── */
+.face-enroll__scan {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--accent-orange);
+  letter-spacing: 1px;
+  padding: 6px 14px;
+  border-top: 1px solid var(--border-dim);
+}
+
+.face-enroll__scan.active {
+  display: flex;
+}
+
+.face-enroll__scan-spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--accent-orange-dim);
+  border-top-color: var(--accent-orange);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* ── Enrolled confirmation state ── */
+.face-enroll--enrolled {
+  border-color: rgba(var(--glow-lime-rgb), 0.3);
+  box-shadow: 0 0 20px rgba(var(--glow-lime-rgb), 0.08);
+}
+
+.face-enroll--enrolled .face-enroll__header {
+  border-bottom-color: rgba(var(--glow-lime-rgb), 0.15);
+}
+
+.face-enroll--error {
+  border-color: rgba(var(--error-red-rgb), 0.3);
+}
+
+/* ── Legacy face capture area ── */
+.face-capture-area {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto 16px;
+  border: 1px solid var(--border-dim);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--bg-primary);
+}
+
+.face-capture-area video {
+  width: 100%;
+  display: block;
+  border-radius: var(--radius);
+  background: #000;
+}
+
+.face-capture-area .face-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.face-capture-area .webcam__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(13, 15, 10, 0.85);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s;
+  z-index: 3;
+}
+
+.face-capture-area .webcam__overlay:hover {
+  color: var(--glow-lime);
+  background: rgba(13, 15, 10, 0.7);
+}
+
+.face-capture-area .webcam__overlay .webcam__overlay-icon {
+  font-size: 28px;
+}
+
+.face-capture-area .webcam__overlay.hidden {
+  display: none;
+}
+
+/* ── Face Verify Status Bar ── */
+.face-verify-status {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 8px 0;
+  color: var(--text-muted);
+  transition: color 0.3s ease;
+}
+
+.face-verify-status--scanning {
+  color: var(--accent-orange);
+  animation: statusPulse 1.2s ease-in-out infinite;
+}
+
+.face-verify-status--capturing {
+  color: var(--accent-orange);
+  animation: statusPulse 0.8s ease-in-out infinite;
+}
+
+.face-verify-status--face_verified {
+  color: var(--glow-lime);
+  text-shadow: 0 0 8px var(--glow-lime-dim);
+}
+
+.face-verify-status--verification_failed {
+  color: var(--error-red);
+  animation: statusPulse 0.6s ease-in-out infinite;
+}
+
+.face-verify-status--unauthorized {
+  color: var(--error-red);
+  font-weight: 600;
+  animation: statusPulse 0.4s ease-in-out infinite;
+  text-shadow: 0 0 12px rgba(255, 58, 58, 0.5);
+}
+
+.face-verify-status--no_face {
+  color: var(--accent-orange);
+}
+
+.face-verify-status--multi_face {
+  color: var(--error-red);
+}
+
+.face-verify-status--loading {
+  color: var(--accent-orange);
+  animation: statusPulse 1.2s ease-in-out infinite;
+}
+
+.face-verify-status--error {
+  color: var(--error-red);
+}
+
+/* ── Verification Overlay (full-screen on unauthorized) ── */
+.verification-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(13, 15, 10, 0.95);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  z-index: 9999;
+  animation: fadeInUp 0.3s ease;
+}
+
+.verification-overlay.active {
+  display: flex;
+}
+
+.verification-overlay__icon {
+  font-size: 64px;
+  animation: statusPulse 0.6s ease-in-out infinite;
+}
+
+.verification-overlay__title {
+  font-family: var(--font-mono);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--error-red);
+  letter-spacing: 3px;
+  text-shadow: 0 0 20px rgba(255, 58, 58, 0.5);
+}
+
+.verification-overlay__text {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-secondary);
+  letter-spacing: 1px;
+  text-align: center;
+  max-width: 400px;
+  line-height: 1.6;
+}
+
+.verification-overlay__btn {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 1px;
+  padding: 10px 32px;
+  border: 1px solid var(--error-red);
+  border-radius: var(--radius);
+  background: rgba(255, 58, 58, 0.1);
+  color: var(--error-red);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.verification-overlay__btn:hover {
+  background: rgba(255, 58, 58, 0.2);
+  box-shadow: 0 0 16px rgba(255, 58, 58, 0.3);
+}
+
+/* ── Verification Step Indicator ── */
+.verification-step {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  padding: 12px 0;
+  border-top: 1px solid var(--border-dim);
+  margin-top: 12px;
+}
+
+.verification-step__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition: background 0.3s;
+}
+
+.verification-step__dot.active {
+  background: var(--glow-lime);
+  box-shadow: 0 0 8px var(--glow-lime-dim);
+}
+
+.verification-step__dot.done {
+  background: var(--glow-lime);
+}
+
+.verification-step__dot.error {
+  background: var(--error-red);
+  box-shadow: 0 0 8px var(--error-dim);
+}
+
+/* ── Webcam Container (login/register context) ── */
+.webcam-container {
+  position: relative;
+  width: 100%;
+  margin: 12px 0;
+  border: 1px solid var(--border-dim);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--bg-primary);
+}
+
+.webcam-container video {
+  width: 100%;
+  display: block;
+  border-radius: var(--radius);
+  background: #000;
+}
+
+.webcam-container .face-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.webcam-container .webcam__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(13, 15, 10, 0.85);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s;
+  z-index: 3;
+}
+
+.webcam-container .webcam__overlay:hover {
+  color: var(--glow-lime);
+  background: rgba(13, 15, 10, 0.7);
+}
+
+.webcam-container .webcam__overlay.hidden {
+  display: none;
+}
+
+/* ── Face Scan Spinner ── */
+.face-scan-indicator {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--accent-orange);
+  letter-spacing: 1px;
+  padding: 6px 0;
+}
+
+.face-scan-indicator.active {
+  display: flex;
+}
+
+.face-scan-indicator__spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--accent-orange-dim);
+  border-top-color: var(--accent-orange);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
 }
 
 /* Reduced motion */

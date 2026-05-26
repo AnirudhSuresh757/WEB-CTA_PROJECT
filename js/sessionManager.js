@@ -157,7 +157,8 @@ var SessionManager = (function () {
     // Recovery: session exists, hasn't expired, and belongs to the current student session
     if (existing && existing.startedAt && !_isExpired(existing)) {
       // Session ID mismatch — stale lab session from a different login
-      if (existing.sessionId && currentSessionId && existing.sessionId !== currentSessionId) {
+      // Also treat missing sessionId as stale (from old sessions before IDs were added)
+      if (!existing.sessionId || !currentSessionId || existing.sessionId !== currentSessionId) {
         _clear();
       } else {
         _warningsFired = {};

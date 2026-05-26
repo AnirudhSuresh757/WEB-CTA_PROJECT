@@ -369,6 +369,16 @@
   text-shadow: 0 0 25px rgba(var(--error-red-rgb), 0.3);
 }
 
+.stat__value--orange {
+  color: var(--accent-orange);
+  text-shadow: 0 0 25px rgba(var(--accent-orange-rgb), 0.3);
+}
+
+.stat__value--cyan {
+  color: var(--accent-cyan);
+  text-shadow: 0 0 25px rgba(0, 229, 255, 0.3);
+}
+
 .stat__label {
   font-family: var(--font-mono);
   font-size: var(--font-size-xs);
@@ -1248,6 +1258,59 @@
 
 .crud-modal__actions .btn {
   flex: 1;
+}
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border: 1px solid var(--border-dim);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn--primary {
+  background: var(--glow-lime);
+  color: var(--bg-primary);
+  border-color: var(--glow-lime);
+  box-shadow: 0 0 12px rgba(var(--glow-lime-rgb), 0.2);
+}
+
+.btn--primary:hover {
+  background: var(--glow-lime-intense);
+  box-shadow: 0 0 20px rgba(var(--glow-lime-rgb), 0.3);
+}
+
+.btn--secondary {
+  background: transparent;
+  color: var(--text-secondary);
+  border-color: var(--border-dim);
+}
+
+.btn--secondary:hover {
+  border-color: var(--border-glow);
+  color: var(--text-primary);
+}
+
+.btn--danger {
+  background: var(--error-dim);
+  color: var(--error-red);
+  border-color: rgba(var(--error-red-rgb), 0.3);
+}
+
+.btn--danger:hover {
+  background: rgba(255, 58, 58, 0.2);
+  border-color: var(--error-red);
+  box-shadow: 0 0 12px rgba(var(--error-red-rgb), 0.2);
 }
 
 /* ── Collapsed Form ── */

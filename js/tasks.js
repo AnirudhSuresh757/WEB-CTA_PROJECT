@@ -157,20 +157,17 @@ var Tasks = (function () {
 
   /**
    * Toggle experiment completion.
+   * Once marked completed, the assignment is permanently locked.
    */
   function toggle(id) {
     var exp = _find(id);
     if (!exp) return;
 
-    exp.completed = !exp.completed;
-    exp.completedAt = exp.completed ? Date.now() : null;
+    // Lock: completed assignments cannot be unchecked
+    if (exp.completed) return;
 
-    // Clear verification if unchecked
-    if (!exp.completed) {
-      exp.verified = false;
-      exp.verifiedBy = null;
-      exp.verifiedAt = null;
-    }
+    exp.completed = true;
+    exp.completedAt = Date.now();
 
     _save();
     _render();
@@ -292,10 +289,11 @@ var Tasks = (function () {
       var isDone = exp.completed;
       var isVerified = exp.verified;
 
-      html += '<li class="task' + (isDone ? ' task--done' : '') + '" data-exp-id="' + exp.id + '">';
+      html += '<li class="task' + (isDone ? ' task--done task--locked' : '') + '" data-exp-id="' + exp.id + '">';
 
-      // Checkbox
-      html += '<div class="task__check' + (isDone ? ' done' : '') + '" data-task-toggle="' + exp.id + '">';
+      // Checkbox — disabled (locked) when completed
+      html += '<div class="task__check' + (isDone ? ' done locked' : '') + '" ' +
+        (isDone ? '' : 'data-task-toggle="' + exp.id + '"') + '>';
       html += isDone ? '✓' : '';
       html += '</div>';
 
@@ -310,7 +308,7 @@ var Tasks = (function () {
       if (isVerified) {
         html += '<span class="task__tag task__tag--verified">Verified</span>';
       } else if (isDone) {
-        html += '<span class="task__tag">Done</span>';
+        html += '<span class="task__tag task__tag--locked">Locked</span>';
       } else {
         html += '<span class="task__tag task__tag--orange">Pending</span>';
       }
@@ -329,9 +327,13 @@ var Tasks = (function () {
       }
       html += '</div>';
 
-      // Remark field
+      // Remark field — read-only when completed
       html += '<div class="task__remark-wrap">';
-      html += '<input class="task__remark" type="text" placeholder="Add remark..." value="' + _escape(exp.remark) + '" data-remark="' + exp.id + '" maxlength="200">';
+      if (isDone) {
+        html += '<input class="task__remark" type="text" placeholder="No remark" value="' + _escape(exp.remark) + '" readonly maxlength="200">';
+      } else {
+        html += '<input class="task__remark" type="text" placeholder="Add remark..." value="' + _escape(exp.remark) + '" data-remark="' + exp.id + '" maxlength="200">';
+      }
       html += '</div>';
 
       // Actions
@@ -474,10 +476,11 @@ var Tasks = (function () {
       var isDone = exp.completed;
       var isVerified = exp.verified;
 
-      html += '<li class="task' + (isDone ? ' task--done' : '') + '" data-exp-id="' + exp.id + '">';
+      html += '<li class="task' + (isDone ? ' task--done task--locked' : '') + '" data-exp-id="' + exp.id + '">';
 
-      // Checkbox
-      html += '<div class="task__check' + (isDone ? ' done' : '') + '" data-task-toggle="' + exp.id + '">';
+      // Checkbox — disabled (locked) when completed
+      html += '<div class="task__check' + (isDone ? ' done locked' : '') + '" ' +
+        (isDone ? '' : 'data-task-toggle="' + exp.id + '"') + '>';
       html += isDone ? '✓' : '';
       html += '</div>';
 
@@ -492,7 +495,7 @@ var Tasks = (function () {
       if (isVerified) {
         html += '<span class="task__tag task__tag--verified">Verified</span>';
       } else if (isDone) {
-        html += '<span class="task__tag">Done</span>';
+        html += '<span class="task__tag task__tag--locked">Locked</span>';
       } else {
         html += '<span class="task__tag task__tag--orange">Pending</span>';
       }
@@ -511,9 +514,13 @@ var Tasks = (function () {
       }
       html += '</div>';
 
-      // Remark field
+      // Remark field — read-only when completed
       html += '<div class="task__remark-wrap">';
-      html += '<input class="task__remark" type="text" placeholder="Add remark..." value="' + _escape(exp.remark) + '" data-remark="' + exp.id + '" maxlength="200">';
+      if (isDone) {
+        html += '<input class="task__remark" type="text" placeholder="No remark" value="' + _escape(exp.remark) + '" readonly maxlength="200">';
+      } else {
+        html += '<input class="task__remark" type="text" placeholder="Add remark..." value="' + _escape(exp.remark) + '" data-remark="' + exp.id + '" maxlength="200">';
+      }
       html += '</div>';
 
       // Actions

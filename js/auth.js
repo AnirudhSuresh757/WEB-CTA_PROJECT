@@ -124,7 +124,7 @@ var Auth = (function () {
   }
 
   // ── Student Registration ──
-  function registerStudent(usn, name, dept, email, mobile, password) {
+  function registerStudent(usn, name, dept, email, mobile, password, faceDescriptor) {
     var users = getUsers();
     var normalizedId = usn.trim().toUpperCase();
     var normalizedEmail = email.trim().toLowerCase();
@@ -159,7 +159,8 @@ var Auth = (function () {
       role: 'student',
       dept: dept.trim().toUpperCase(),
       email: normalizedEmail,
-      mobile: normalizedMobile
+      mobile: normalizedMobile,
+      hasFace: !!faceDescriptor
     };
 
     users.push(newStudent);
@@ -275,6 +276,64 @@ var Auth = (function () {
     saveUsers(users);
 
     return { success: true, message: 'Password updated successfully.' };
+  }
+
+  /**
+   * Reset password without current password (used after face verification).
+   * Requires: USN exists, new password meets criteria.
+   */
+  function resetPassword(userId, newPassword) {
+    var users = getUsers();
+    var normalizedId = userId.trim().toUpperCase();
+
+    var user = null;
+    for (var i = 0; i < users.length; i++) {
+      if (users[i].id.toUpperCase() === normalizedId) {
+        user = users[i];
+        break;
+      }
+    }
+
+    if (!user) {
+      return { success: false, message: 'User not found.' };
+    }
+
+    if (user.role !== 'student') {
+      return { success: false, message: 'Password reset is only available for student accounts.' };
+    }
+
+    if (!newPassword || newPassword.length < 6) {
+      return { success: false, message: 'New password must be at least 6 characters.' };
+    }
+
+    if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(newPassword)) {
+      return { success: false, message: 'Password must contain uppercase, lowercase, and number.' };
+    }
+
+    user.password = newPassword;
+    saveUsers(users);
+
+    return { success: true, message: 'Password has been reset successfully.' };
+  }
+
+  /**
+   * Find a student by USN (returns minimal public info, no password).
+   */
+  function findStudent(usn) {
+    var users = getUsers();
+    var normalizedId = (usn || '').trim().toUpperCase();
+    for (var i = 0; i < users.length; i++) {
+      if (users[i].id.toUpperCase() === normalizedId && users[i].role === 'student') {
+        return {
+          id: users[i].id,
+          name: users[i].name,
+          dept: users[i].dept,
+          role: users[i].role,
+          hasFace: !!users[i].hasFace
+        };
+      }
+    }
+    return null;
   }
 
   // ── Student Session Management ──
@@ -437,6 +496,8 @@ var Auth = (function () {
 
     // Password
     changePassword: changePassword,
+    resetPassword: resetPassword,
+    findStudent: findStudent,
 
     // Page Guards
     guardStudentPage: guardStudentPage,
