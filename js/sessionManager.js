@@ -514,19 +514,7 @@ var SessionManager = (function () {
   }
 
   function _clearAttendanceState() {
-    // Clear any attendance-related storage keys
-    var keysToRemove = [];
-    for (var i = 0; i < localStorage.length; i++) {
-      var key = localStorage.key(i);
-      if (key && key.indexOf('attendance') !== -1) {
-        keysToRemove.push(key);
-      }
-    }
-    keysToRemove.forEach(function (k) {
-      localStorage.removeItem(k);
-    });
-
-    // Reset attendance in lab session if still in storage
+    // Only clear the current session's attendance flag — preserve historical records
     var state = _load();
     if (state) {
       state.attendanceMarked = false;

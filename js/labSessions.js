@@ -321,18 +321,24 @@ var LabSessions = (function () {
   function getStats() {
     var history = _getHistory();
     var totalTime = 0;
-    var sessionCount = history.length;
+    var sessionCount = 0;
 
+    // Only count completed sessions (duration > 0) to exclude ghost/active sessions
     for (var i = 0; i < history.length; i++) {
-      totalTime += (history[i].duration || 0);
+      if (history[i].duration && history[i].duration > 0) {
+        sessionCount++;
+        totalTime += history[i].duration;
+      }
     }
 
     var avgTime = sessionCount > 0 ? Math.round(totalTime / sessionCount) : 0;
 
-    // Attendance rate — count history entries that have an attendanceAt timestamp
+    // Attendance rate — count completed sessions that were attended
     var attendedCount = 0;
     for (var j = 0; j < history.length; j++) {
-      if (history[j].attended) attendedCount++;
+      if (history[j].duration && history[j].duration > 0 && history[j].attended) {
+        attendedCount++;
+      }
     }
     var attendanceRate = sessionCount > 0
       ? Math.round((attendedCount / sessionCount) * 100)

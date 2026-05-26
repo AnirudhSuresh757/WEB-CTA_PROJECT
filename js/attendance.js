@@ -160,57 +160,58 @@ var Attendance = (function () {
     var history = _getHistory();
     var today = new Date().toISOString().split('T')[0];
 
-    var totalDays = history.length;
-    var presentDays = 0;
     var lateDays = 0;
     var todayMarked = false;
 
-    // Count unique dates
-    var uniqueDates = {};
     for (var i = 0; i < history.length; i++) {
-      var r = history[i];
-      uniqueDates[r.date] = true;
-      if (r.late) lateDays++;
-      if (r.date === today) todayMarked = true;
+      if (history[i].late) lateDays++;
+      if (history[i].date === today) todayMarked = true;
     }
 
-    presentDays = Object.keys(uniqueDates).length;
+    // Attendance percentage from LabSessions history (single source of truth)
+    // Only count completed sessions (duration > 0) to exclude active/ghost sessions
+    var totalSessions = 0;
+    var presentSessions = 0;
+    var activeSessionInHistory = false;
+    var activeSessionId = (typeof SessionManager !== 'undefined') ? SessionManager.getSessionId() : null;
 
-    // Attendance percentage — based on expected sessions (assume 5 days/week, current week)
-    // When no attendance history exists, everything is 0
-    var expectedDays = totalDays > 0 ? _getExpectedDays() : 0;
-    var percentage = expectedDays > 0 ? Math.round((presentDays / expectedDays) * 100) : 0;
+    if (typeof LabSessions !== 'undefined') {
+      var labHistory = LabSessions.getHistory();
+      for (var k = 0; k < labHistory.length; k++) {
+        var entry = labHistory[k];
+        if (entry.duration && entry.duration > 0) {
+          totalSessions++;
+          if (entry.attended) presentSessions++;
+          // Track if current active session already exists in history
+          if (activeSessionId && entry.sessionId === activeSessionId) {
+            activeSessionInHistory = true;
+          }
+        }
+      }
+    }
+
+    // Include current active session in count only if not already in history
+    if (typeof SessionManager !== 'undefined' && SessionManager.isActive() && !activeSessionInHistory) {
+      totalSessions++;
+      if (SessionManager.isAttendanceMarked()) presentSessions++;
+    }
+
+    var percentage = totalSessions > 0 ? Math.round((presentSessions / totalSessions) * 100) : 0;
     if (percentage > 100) percentage = 100;
 
     // Current streak
     var streak = _calculateStreak(history);
 
     return {
-      presentDays: presentDays,
+      presentDays: presentSessions,
       lateDays: lateDays,
-      absentDays: Math.max(expectedDays - presentDays, 0),
-      totalDays: totalDays,
-      expectedDays: expectedDays,
+      absentDays: Math.max(totalSessions - presentSessions, 0),
+      totalDays: totalSessions,
+      expectedDays: totalSessions,
       percentage: percentage,
       streak: streak,
       todayMarked: todayMarked
     };
-  }
-
-  function _getExpectedDays() {
-    // Count weekdays in current week (Mon-Fri)
-    var now = new Date();
-    var dayOfWeek = now.getDay(); // 0=Sun, 1=Mon, ...
-    // Expected = weekdays elapsed this week (Mon to today)
-    var expected = 0;
-    for (var d = 1; d <= 5; d++) { // Mon=1 to Fri=5
-      if (d <= dayOfWeek || dayOfWeek === 0) {
-        expected++;
-      }
-    }
-    // If Sunday, count full week
-    if (dayOfWeek === 0) expected = 5;
-    return Math.max(expected, 1); // At least 1
   }
 
   function _calculateStreak(history) {

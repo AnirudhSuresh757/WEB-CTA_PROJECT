@@ -1167,7 +1167,17 @@
       }
 
       // ── Update attendance on session events ──
-      SessionManager.on('attendance', function () {
+      SessionManager.on('attendance', function (data) {
+        // Update LabSessions history record so attended flag is set immediately
+        if (data && data.session) {
+          LabSessions.recordSession({
+            sessionId: data.session.sessionId,
+            startedAt: data.session.startedAt,
+            elapsed: data.session.elapsed,
+            attendanceMarked: true
+          });
+        }
+
         // Always refresh the status card (includes mark button)
         Attendance.renderStatus(document.getElementById('attStatusCard'));
 
